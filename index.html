@@ -298,6 +298,53 @@
     <a href="#day5" class="day-tab" onclick="switchDay(5)">Day 5</a>
     <a href="#day6" class="day-tab" onclick="switchDay(6)">Day 6</a>
 </div>
+    <!-- 💱 1. 即時匯率換算區塊 (獨立) -->
+<div id="currency-exchange-card" style="background: #ffffff; border: 1px solid #e0e0e0; border-radius: 10px; padding: 16px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+    <h3 style="margin-top: 0; margin-bottom: 8px; font-size: 1.1em; color: #333;">
+        💱 今日即時匯率試算
+    </h3>
+    <div id="rate-status" style="font-size: 0.82em; color: #666; margin-bottom: 12px;">
+        🔄 正在連線讀取今日最新匯率...
+    </div>
+
+    <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 8px;">
+        <input type="number" id="calc-foreign-amount" placeholder="外幣金額" value="10000" style="flex: 1; min-width: 100px; padding: 8px; border: 1px solid #ccc; border-radius: 6px;">
+        
+        <select id="calc-foreign-curr" style="padding: 8px; border: 1px solid #ccc; border-radius: 6px; background: white;">
+            <option value="KRW">韓元 (KRW)</option>
+            <option value="TWD">台幣 (NTD)</option>
+        </select>
+
+        <span style="font-weight: bold; color: #666;">≈</span>
+
+        <div style="flex: 1; min-width: 120px; background: #f8f9fa; padding: 8px 12px; border-radius: 6px; border: 1px solid #e0e0e0; font-weight: bold; color: #2c3e50;">
+            NT$ <span id="calc-twd-result">0</span>
+        </div>
+    </div>
+</div>
+
+<!-- 🟢 2. 即時記帳功能區塊 (獨立) -->
+<div class="accounting-input-group" style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 15px;">
+    <input type="text" id="expense-item" placeholder="消費項目 (例: 炸雞)" style="padding: 8px; border: 1px solid #ccc; border-radius: 6px; flex: 2;">
+    
+    <select id="expense-currency" style="padding: 8px; border: 1px solid #ccc; border-radius: 6px;">
+        <option value="KRW">KRW (韓元)</option>
+        <option value="TWD">TWD (台幣)</option>
+    </select>
+
+    <input type="number" id="expense-amount" placeholder="金額" style="padding: 8px; border: 1px solid #ccc; border-radius: 6px; flex: 1;">
+    <input type="text" id="expense-payer" placeholder="付款人" style="padding: 8px; border: 1px solid #ccc; border-radius: 6px; flex: 1;">
+    <button type="button" id="add-expense-btn" style="padding: 8px 16px; background: #E89B6C; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;">新增紀錄</button>
+</div>
+
+<!-- 清單顯示區 -->
+<ul id="accounting-list-container" style="list-style: none; padding: 0; margin: 0;"></ul>
+
+<!-- 每人分攤與總額統計區 -->
+<div id="accounting-summary" style="margin-top: 15px; font-weight: bold; background: #f8f9fa; padding: 12px; border-radius: 8px; border: 1px solid #e0e0e0;">
+    <div style="font-size: 1.05em; margin-bottom: 6px;">📊 每人付款統計（自動折合台幣）：</div>
+    <div id="summary-details" style="font-weight: normal; font-size: 0.95em; color: #555;">尚無消費紀錄</div>
+</div>
     <div class="container">
         <!-- 行前須知 -->
         <div class="section-title">📌 行前必看須知</div>
@@ -319,55 +366,7 @@
             <p style="font-size: 13px;"><b>新款 iPhone (15以上)：</b>線不一定要原廠，但必備「USB-A 轉接頭」</p>
         </div>
 
-<!-- 💱 即時匯率換算區塊 -->
-<div id="currency-exchange-card" style="background: #ffffff; border: 1px solid #e0e0e0; border-radius: 10px; padding: 16px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
-    <h3 style="margin-top: 0; margin-bottom: 8px; font-size: 1.1em; color: #333;">
-        💱 今日即時匯率試算
-    </h3>
-    <!-- 顯示匯率更新狀態與今日時間 -->
-    <div id="rate-status" style="font-size: 0.82em; color: #666; margin-bottom: 12px;">
-        🔄 正在連線讀取今日最新匯率...
-    </div>
 
-    <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 8px;">
-        <input type="number" id="calc-foreign-amount" placeholder="外幣金額" value="10000" style="flex: 1; min-width: 100px; padding: 8px; border: 1px solid #ccc; border-radius: 6px;">
-        
-        <select id="calc-foreign-curr" style="padding: 8px; border: 1px solid #ccc; border-radius: 6px; background: white;">
-            <option value="KRW">韓元 (KRW)</option>
-            <option value="NTD">台幣 (NTD)</option>
-        </select>
-
-        <span style="font-weight: bold; color: #666;">≈</span>
-
-        <div style="flex: 1; min-width: 120px; background: #f8f9fa; padding: 8px 12px; border-radius: 6px; border: 1px solid #e0e0e0; font-weight: bold; color: #2c3e50;">
-            NT$ <span id="calc-twd-result">0</span>
-        </div>
-    </div>
-</div>
-        <!-- 🟢 新增：即時共編記帳功能區塊 -->
-    <!-- 記帳輸入區塊 -->
-<div class="accounting-input-group">
-    <input type="text" id="expense-item" placeholder="消費項目 (例如: 炸雞)">
-    
-    <!-- ⚠️ 這裡要確定有 id="expense-currency" 以及正確的 value -->
-    <select id="expense-currency">
-        <option value="KRW">KRW (韓元)</option>
-        <option value="TWD">TWD (台幣)</option>
-    </select>
-
-    <input type="number" id="expense-amount" placeholder="金額">
-    <input type="text" id="expense-payer" placeholder="付款人">
-    <button type="button" id="add-expense-btn">新增紀錄</button>
-</div>
-
-<!-- 清單與統計結果顯示區 -->
-<ul id="accounting-list-container"></ul>
-
-<!-- 2. 統計總覽顯示區 -->
-<div id="accounting-summary" style="margin-top: 15px; font-weight: bold; background: #f8f9fa; padding: 10px; border-radius: 6px;">
-    <div>📊 支出統計：</div>
-    <div id="summary-details" style="font-weight: normal; font-size: 0.95em; color: #555;">尚無消費紀錄</div>
-</div>
 
         <!-- ================= DAY 1 ================= -->
         <div id="day1" class="day-section">
@@ -983,92 +982,26 @@
         switchDay(1);
     });
 </script>
-    <!-- 🟢 新增：導入 Firebase 核心與 Realtime Database 程式庫 -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+<!-- 載入 Firebase 核心套件 (若後續需備份至雲端可使用) -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
+<!-- 主程式邏輯 -->
 <script>
-    const itemInput = document.getElementById('expense-item');
-    const amountInput = document.getElementById('expense-amount');
-    const payerInput = document.getElementById('expense-payer');
-    const addBtn = document.getElementById('add-expense-btn');
-    const listContainer = document.getElementById('accounting-list-container');
-    const totalDisplay = document.getElementById('accounting-total');
-
-    let totalAmount = 0;
-
-    addBtn.addEventListener('click', () => {
-        const item = itemInput.value.trim();
-        const amount = parseFloat(amountInput.value);
-        const payer = payerInput.value.trim();
-
-        if (!item || isNaN(amount) || amount <= 0) {
-            alert('請輸入正確的項目與金額！');
-            return;
-        }
-
-        // 建立新增項目
-        const li = document.createElement('li');
-        li.className = 'accounting-item';
-        li.innerHTML = `
-            <span><b>${item}</b> (${payer || '未具名'}): $${amount.toLocaleString()}</span>
-            <button class="delete-btn">刪除</button>
-        `;
-
-        // 刪除項目邏輯
-        li.querySelector('.delete-btn').addEventListener('click', () => {
-            totalAmount -= amount;
-            totalDisplay.textContent = `總計金額：${totalAmount.toLocaleString()}`;
-            li.remove();
-        });
-
-        listContainer.appendChild(li);
-
-        // 更新總金額
-        totalAmount += amount;
-        totalDisplay.textContent = `總計金額：${totalAmount.toLocaleString()}`;
-
-        // 清空輸入框
-        itemInput.value = '';
-        amountInput.value = '';
-    });
-</script><script>
-    // 預設匯率 (當 API 還沒載入或失敗時的備案)
+    // 全域匯率變數（預設備案）
     let exchangeRates = {
         TWD: 1,
-        KRW: 0.024, // 1 韓幣 ≈ 0.024 台幣
-        JPY: 0.21,
-        USD: 32.0
+        KRW: 0.024 // 預設 1 韓元 ≈ 0.024 台幣
     };
 
-    // 1. 自動抓取今日最新匯率
-    async function fetchLiveRates() {
-        const statusEl = document.getElementById('rate-status');
-        try {
-            const res = await fetch('https://open.er-api.com/v6/latest/TWD');
-            const data = await res.json();
-            if (data && data.rates) {
-                // 計算 1 外幣等於多少 TWD
-                exchangeRates.TWD = 1;
-                exchangeRates.KRW = 1 / data.rates.KRW;
-                exchangeRates.JPY = 1 / data.rates.JPY;
-                exchangeRates.USD = 1 / data.rates.USD;
-
-                if (statusEl) {
-                    statusEl.innerHTML = `🟢 <b>今日匯率已更新</b> (1 KRW ≈ ${exchangeRates.KRW.toFixed(4)} TWD)`;
-                }
-                // 匯率更新後刷新畫面
-                renderList();
-                updateSummary();
-            }
-        } catch (e) {
-            console.log('使用預設匯率', e);
-            if (statusEl) statusEl.innerHTML = `⚠️ 使用離線參考匯率`;
-        }
-    }
-
-    // 2. 記帳資料
+    // 記帳陣列
     let expenses = [];
+
+    // 取得 HTML 元素
+    const statusEl = document.getElementById('rate-status');
+    const calcAmountInput = document.getElementById('calc-foreign-amount');
+    const calcCurrSelect = document.getElementById('calc-foreign-curr');
+    const calcTwdResult = document.getElementById('calc-twd-result');
 
     const itemInput = document.getElementById('expense-item');
     const currencySelect = document.getElementById('expense-currency');
@@ -1078,10 +1011,50 @@
     const listContainer = document.getElementById('accounting-list-container');
     const summaryDetails = document.getElementById('summary-details');
 
+    // 1. 抓取 API 即時匯率
+    async function fetchLiveRates() {
+        try {
+            const res = await fetch('https://open.er-api.com/v6/latest/TWD');
+            const data = await res.json();
+            if (data && data.rates) {
+                exchangeRates.TWD = 1;
+                exchangeRates.KRW = 1 / data.rates.KRW; // 計算 1 韓元等於多少台幣
+
+                if (statusEl) {
+                    statusEl.innerHTML = `🟢 <b>今日匯率已更新</b> (1 KRW ≈ ${exchangeRates.KRW.toFixed(4)} TWD)`;
+                }
+                
+                // 匯率載入完成後，同步更新試算區與記帳清單
+                updateConverter();
+                renderList();
+                updateSummary();
+            }
+        } catch (e) {
+            console.log('連線失敗，使用離線參考匯率', e);
+            if (statusEl) statusEl.innerHTML = `⚠️ 連線失敗，使用離線參考匯率`;
+            updateConverter();
+        }
+    }
+
+    // 2. 匯率試算器計算邏輯
+    function updateConverter() {
+        if (!calcAmountInput || !calcCurrSelect || !calcTwdResult) return;
+        const amount = parseFloat(calcAmountInput.value) || 0;
+        const curr = calcCurrSelect.value;
+        const rate = exchangeRates[curr] || 1;
+        const twd = Math.round(amount * rate);
+        calcTwdResult.textContent = twd.toLocaleString();
+    }
+
+    // 試算器事件監聽（輸入數字或切換選單時即時計算）
+    if (calcAmountInput) calcAmountInput.addEventListener('input', updateConverter);
+    if (calcCurrSelect) calcCurrSelect.addEventListener('change', updateConverter);
+
+    // 3. 新增消費紀錄
     if (addBtn) {
         addBtn.addEventListener('click', () => {
             const item = itemInput.value.trim();
-            const currency = currencySelect ? currencySelect.value : 'TWD'; // 取得選取的幣別
+            const currency = currencySelect.value;
             const amount = parseFloat(amountInput.value);
             const payer = payerInput.value.trim() || '未具名';
 
@@ -1090,47 +1063,56 @@
                 return;
             }
 
-            expenses.push({ id: Date.now(), item, currency, amount, payer });
+            // 新增至陣列
+            expenses.push({
+                id: Date.now(),
+                item,
+                currency,
+                amount,
+                payer
+            });
 
+            // 刷新畫面與統計
             renderList();
             updateSummary();
 
+            // 清空輸入框
             itemInput.value = '';
             amountInput.value = '';
         });
     }
 
-    // 顯示清單 (包含折合台幣換算)
+    // 4. 渲染消費清單 (包含刪除按鈕與折合台幣)
     function renderList() {
         if (!listContainer) return;
         listContainer.innerHTML = '';
 
         expenses.forEach(exp => {
-            // 關鍵換算：金額 * 匯率
             const rate = exchangeRates[exp.currency] || 1;
             const twdAmount = Math.round(exp.amount * rate);
 
             const li = document.createElement('li');
-            li.style.cssText = 'display: flex; justify-content: space-between; margin-bottom: 8px; padding: 8px; background: #fff; border-radius: 6px; border: 1px solid #ddd;';
+            li.style.cssText = 'display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; padding: 10px; background: #fff; border-radius: 6px; border: 1px solid #ddd; box-shadow: 0 1px 3px rgba(0,0,0,0.05);';
             li.innerHTML = `
                 <div>
-                    <b>${exp.item}</b> (${exp.payer} 先付)<br>
+                    <b>${exp.item}</b> <small style="color:#666;">(${exp.payer} 付款)</small><br>
                     <span style="color: #d9534f; font-weight: bold;">${exp.currency} ${exp.amount.toLocaleString()}</span>
-                    <small style="color: #666;">➔ 約 NT$ ${twdAmount.toLocaleString()}</small>
+                    <small style="color: #28a745; margin-left: 5px;">(折合 NT$ ${twdAmount.toLocaleString()})</small>
                 </div>
-                <button onclick="deleteExpense(${exp.id})" style="background: #ff4d4f; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer;">刪除</button>
+                <button onclick="deleteExpense(${exp.id})" style="background: #ff4d4f; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.85em;">刪除</button>
             `;
             listContainer.appendChild(li);
         });
     }
 
-    function deleteExpense(id) {
+    // 5. 刪除紀錄函式（掛載於 window 以確保點擊按鈕時找得到）
+    window.deleteExpense = function(id) {
         expenses = expenses.filter(exp => exp.id !== id);
         renderList();
         updateSummary();
-    }
+    };
 
-    // 計算總額統計 (自動把韓幣換算成台幣加總)
+    // 6. 按付款人分類統計 (自動換算台幣)
     function updateSummary() {
         if (!summaryDetails) return;
         if (expenses.length === 0) {
@@ -1151,7 +1133,7 @@
             }
             totals[exp.payer].raw[exp.currency] += exp.amount;
 
-            // 累計換算後的台幣
+            // 累計換算後的台幣金額
             const rate = exchangeRates[exp.currency] || 1;
             totals[exp.payer].totalTwd += Math.round(exp.amount * rate);
         });
@@ -1163,17 +1145,17 @@
                 .join(' + ');
 
             html += `
-                <div style="margin-top: 6px; padding-bottom: 6px; border-bottom: 1px dashed #ccc;">
-                    👤 <b>${payer}</b>：${rawText}<br>
-                    <span style="color: #0275d8;">👉 折合台幣共約：<b>NT$ ${data.totalTwd.toLocaleString()}</b></span>
+                <div style="margin-top: 8px; padding-bottom: 8px; border-bottom: 1px dashed #ccc;">
+                    👤 <b>${payer}</b> 先付了：${rawText}<br>
+                    <span style="color: #0275d8; font-weight: bold;">👉 折合台幣總計：NT$ ${data.totalTwd.toLocaleString()}</span>
                 </div>
             `;
         }
         summaryDetails.innerHTML = html;
     }
 
-    // 啟動時自動讀取匯率
-    fetchLiveRates();
-</script>
+    // 頁面載入時觸發匯率抓取
+    document.addEventListener('DOMContentLoaded', fetchLiveRates);
+</script>   
 </body>
 </html>
