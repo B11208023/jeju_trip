@@ -290,7 +290,14 @@
         <h1>Jeju 濟州島六天五夜🍊</h1>
         <p>2026.09.02-2026.09.07</p>
     </header>
-
+<div class="day-nav">
+    <a href="#day1" class="day-tab active" onclick="switchDay(1)">Day 1</a>
+    <a href="#day2" class="day-tab" onclick="switchDay(2)">Day 2</a>
+    <a href="#day3" class="day-tab" onclick="switchDay(3)">Day 3</a>
+    <a href="#day4" class="day-tab" onclick="switchDay(4)">Day 4</a>
+    <a href="#day5" class="day-tab" onclick="switchDay(5)">Day 5</a>
+    <a href="#day6" class="day-tab" onclick="switchDay(6)">Day 6</a>
+</div>
     <div class="container">
         <!-- 行前須知 -->
         <div class="section-title">📌 行前必看須知</div>
@@ -948,7 +955,43 @@
         </div>
 
     </div>
+<script>
+    // 🍊 濟州 6 日低飽和度莫蘭迪色彩對照表
+    const jejuDayThemes = {
+        1: { primary: '#E89B6C', bg: '#FAF4EF', border: '#F0E0D6' }, // Day 1 奶油柑橘
+        2: { primary: '#D8B26E', bg: '#FAF6EE', border: '#ECE2D0' }, // Day 2 芥末微光黃
+        3: { primary: '#6FA080', bg: '#F1F6F3', border: '#D3E3DA' }, // Day 3 苔蘚森林綠
+        4: { primary: '#5C94B2', bg: '#F0F5F8', border: '#CCE1EC' }, // Day 4 霧藍果凍海
+        5: { primary: '#6B7280', bg: '#F4F5F7', border: '#D1D5DB' }, // Day 5 火山玄武灰
+        6: { primary: '#9A81A8', bg: '#F7F3F8', border: '#E2D7E8' }  // Day 6 煙燻繡球紫
+    };
 
+    // 切換天數主題色
+    function switchDay(dayNumber) {
+        const theme = jejuDayThemes[dayNumber];
+        if (!theme) return;
+
+        // 1. 動態修改全域 CSS 變數
+        document.documentElement.style.setProperty('--primary', theme.primary);
+        document.documentElement.style.setProperty('--primary-light', theme.bg);
+        document.documentElement.style.setProperty('--border-color', theme.border);
+
+        // 2. 更新頂部 Day 1 ~ Day 6 按鈕的高亮狀態
+        const tabs = document.querySelectorAll('.day-tab');
+        tabs.forEach((tab, index) => {
+            if (index + 1 === dayNumber) {
+                tab.classList.add('active');
+            } else {
+                tab.classList.remove('active');
+            }
+        });
+    }
+
+    // 預設一進網頁顯示 Day 1 顏色
+    document.addEventListener('DOMContentLoaded', () => {
+        switchDay(1);
+    });
+</script>
     <!-- 🟢 新增：導入 Firebase 核心與 Realtime Database 程式庫 -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
