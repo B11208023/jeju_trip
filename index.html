@@ -23,12 +23,19 @@
         --success: #2EA44F;
     }
 
-   * {
+   @font-face {
+    font-family: 'MyYunFeng';
+    src: url('./UAnW3.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+/* 2. 套用到全域 */
+* {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    /* 在最前面加上你的自訂字體名稱，並用逗號跟原本的備用字體隔開 */
-    font-family: "DFYunFeng", "華康芸風體", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-family: 'MyYunFeng', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
     body {
         background-color: var(--primary-light); /* 背景隨天數微調 */
