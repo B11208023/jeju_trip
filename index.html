@@ -958,115 +958,55 @@
 
     </div>
 
-
-</body>
-    </div>
-
     <!-- 🟢 新增：導入 Firebase 核心與 Realtime Database 程式庫 -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
-<script type="module">
-  // Import the functions you need from the SDKs you need
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
-  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-analytics.js";
-  // TODO: Add SDKs for Firebase products that you want to use
-  // https://firebase.google.com/docs/web/setup#available-libraries
+<script>
+    const itemInput = document.getElementById('expense-item');
+    const amountInput = document.getElementById('expense-amount');
+    const payerInput = document.getElementById('expense-payer');
+    const addBtn = document.getElementById('add-expense-btn');
+    const listContainer = document.getElementById('accounting-list-container');
+    const totalDisplay = document.getElementById('accounting-total');
 
-  // Your web app's Firebase configuration
-  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-  const firebaseConfig = {
-    apiKey: "AIzaSyAL7Q7h31l4kdfYZJp_X11Zu51K5QJGVTE",
-    authDomain: "jeju-bbc51.firebaseapp.com",
-    projectId: "jeju-bbc51",
-    storageBucket: "jeju-bbc51.firebasestorage.app",
-    messagingSenderId: "972869027453",
-    appId: "1:972869027453:web:bb7af67c78c81edee35314",
-    measurementId: "G-XTCXBNNWE8"
-  };
+    let totalAmount = 0;
 
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-  const analytics = getAnalytics(app);
+    addBtn.addEventListener('click', () => {
+        const item = itemInput.value.trim();
+        const amount = parseFloat(amountInput.value);
+        const payer = payerInput.value.trim();
 
-        
-        // 防止重複初始化
-        if (!firebase.apps.length) {
-            firebase.initializeApp(firebaseConfig);
+        if (!item || isNaN(amount) || amount <= 0) {
+            alert('請輸入正確的項目與金額！');
+            return;
         }
-        const database = firebase.database();
-        
-        // 指向與你在安全規則中對應的秘密隱密節點路聯結線
-        const expenseRef = database.ref('jeju_expenses_secret');
 
-        // 🟢 新增：2. 前端 DOM 元素控制與記帳邏輯
-        const itemInput = document.getElementById('expense-item');
-        const amountInput = document.getElementById('expense-amount');
-        const payerInput = document.getElementById('expense-payer');
-        const addBtn = document.getElementById('add-expense-btn');
-        const listContainer = document.getElementById('accounting-list-container');
-        const totalContainer = document.getElementById('accounting-total');
+        // 建立新增項目
+        const li = document.createElement('li');
+        li.className = 'accounting-item';
+        li.innerHTML = `
+            <span><b>${item}</b> (${payer || '未具名'}): $${amount.toLocaleString()}</span>
+            <button class="delete-btn">刪除</button>
+        `;
 
-        // 點擊新增按鈕將資料推送到 Firebase Realtime Database
-        addBtn.addEventListener('click', () => {
-            const item = itemInput.value.trim();
-            const amount = parseInt(amountInput.value.trim(), 10);
-            const payer = payerInput.value.trim() || "未具名";
-
-            if (!item || isNaN(amount)) {
-                alert('請輸入完整的項目與金額！');
-                return;
-            }
-
-            // 推送帳目資料到 Firebase
-            expenseRef.push({
-                item: item,
-                amount: amount,
-                payer: payer,
-                timestamp: firebase.database.ServerValue.TIMESTAMP
-            });
-
-            // 清空輸入框
-            itemInput.value = '';
-            amountInput.value = '';
+        // 刪除項目邏輯
+        li.querySelector('.delete-btn').addEventListener('click', () => {
+            totalAmount -= amount;
+            totalDisplay.textContent = `總計金額：${totalAmount.toLocaleString()}`;
+            li.remove();
         });
 
-        // 監聽 Firebase 資料庫變動，並即時渲染更新所有人的網頁畫面
-        expenseRef.on('value', (snapshot) => {
-            listContainer.innerHTML = ''; // 清空舊畫面
-            let total = 0;
+        listContainer.appendChild(li);
 
-            snapshot.forEach((childSnapshot) => {
-                const id = childSnapshot.key;
-                const data = childSnapshot.val();
-                total += data.amount;
+        // 更新總金額
+        totalAmount += amount;
+        totalDisplay.textContent = `總計金額：${totalAmount.toLocaleString()}`;
 
-                // 產生網頁 HTML 節點
-                const li = document.createElement('li');
-                li.className = 'accounting-item';
-                li.innerHTML = `
-                    <div>
-                        <strong>${data.item}</strong> 
-                        <span style="color:var(--text-muted); font-size:12px;">(${data.payer})</span>
-                    </div>
-                    <div>
-                        <span style="font-weight:bold; margin-right:8px;">$${data.amount.toLocaleString()}</span>
-                        <button class="delete-btn" onclick="deleteExpense('${id}')">❌</button>
-                    </div>
-                `;
-                listContainer.appendChild(li);
-            });
-
-            // 更新顯示總金額
-            totalContainer.innerText = `總計金額：${total.toLocaleString()}`;
-        });
-
-        // 刪除帳目功能（會自動同步刪除所有人畫面上的該筆項目）
-        function deleteExpense(id) {
-            if (confirm('確定要刪除這筆帳目嗎？')) {
-                expenseRef.child(id).remove();
-            }
-        }
-    </script>
+        // 清空輸入框
+        itemInput.value = '';
+        amountInput.value = '';
+    });
+</script>
 </body>
 </html>
