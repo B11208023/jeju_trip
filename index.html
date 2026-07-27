@@ -23,12 +23,13 @@
         --success: #2EA44F;
     }
 
-    * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    }
+   * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    /* 在最前面加上你的自訂字體名稱，並用逗號跟原本的備用字體隔開 */
+    font-family: "NaikaiFont-Regular", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
 
     body {
         background-color: var(--primary-light); /* 背景隨天數微調 */
@@ -949,9 +950,9 @@
     // 🍊 濟州 6 日低飽和度莫蘭迪色彩對照表
     const jejuDayThemes = {
         1: { primary: '#E89B6C', bg: '#FAF4EF', border: '#F0E0D6' }, // Day 1 奶油柑橘
-        2: { primary: '#D8B26E', bg: '#FAF6EE', border: '#ECE2D0' }, // Day 2 芥末微光黃
-        3: { primary: '#6FA080', bg: '#F1F6F3', border: '#D3E3DA' }, // Day 3 苔蘚森林綠
-        4: { primary: '#5C94B2', bg: '#F0F5F8', border: '#CCE1EC' }, // Day 4 霧藍果凍海
+        2: { primary: '#5C94B2', bg: '#F0F5F8', border: '#CCE1EC' }, // Day 2 霧藍果凍海
+        3:{ primary: '#D8B26E', bg: '#FAF6EE', border: '#ECE2D0' }, // Day 3 芥末微光黃
+        4: { primary: '#6FA080', bg: '#F1F6F3', border: '#D3E3DA' }, // Day 4 苔蘚森林綠 
         5: { primary: '#9A81A8', bg: '#F7F3F8', border: '#E2D7E8' }, // Day 5 煙燻繡球紫
         6: { primary: '#6B7280', bg: '#F4F5F7', border: '#D1D5DB' }, // Day 6 火山玄武灰
     };
