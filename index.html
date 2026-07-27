@@ -4,329 +4,285 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Jeju🍊六天五夜行程表</title>
-    <style>
-        html {
-            scroll-behavior: smooth;
-        }
-        :root {
-            --primary: #FF7A00;
-            --primary-light: #FFF4EB;
-            --bg: #F8F9FA;
-            --card-bg: #FFFFFF;
-            --text: #333333;
-            --text-muted: #666666;
-            --accent: #4A90E2;
-            --danger: #E02020;
-            --success: #2EA44F;
-        }
+   <style>
+    html {
+        scroll-behavior: smooth;
+    }
+    
+    /* 🎨 CSS 變數預設值 (Day 1 莫蘭迪奶油橘) */
+    :root {
+        --primary: #E89B6C;          /* 主色 */
+        --primary-light: #FAF4EF;    /* 淺色襯底 */
+        --border-color: #F0E0D6;     /* 邊框顏色 */
+        --bg: #FAFAFA;
+        --card-bg: #FFFFFF;
+        --text: #333333;
+        --text-muted: #666666;
+        --accent: #5C94B2;
+        --danger: #E02020;
+        --success: #2EA44F;
+    }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-        }
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
 
-        body {
-            background-color: var(--bg);
-            color: var(--text);
-            line-height: 1.6;
-            padding-bottom: 60px;
-        }
+    body {
+        background-color: var(--primary-light); /* 背景隨天數微調 */
+        color: var(--text);
+        line-height: 1.6;
+        padding-bottom: 60px;
+        transition: background-color 0.3s ease;
+    }
 
-        header {
-            background: linear-gradient(135deg, #FF9F43, var(--primary));
-            color: white;
-            padding: 30px 20px;
-            text-align: center;
-            border-bottom-left-radius: 20px;
-            border-bottom-right-radius: 20px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        }
+    header {
+        background: var(--primary); /* 改為動態主色 */
+        color: white;
+        padding: 25px 20px;
+        text-align: center;
+        border-bottom-left-radius: 20px;
+        border-bottom-right-radius: 20px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        transition: background 0.3s ease;
+    }
 
-        header h1 {
-            font-size: 24px;
-            margin-bottom: 5px;
-        }
+    header h1 {
+        font-size: 22px;
+        margin-bottom: 5px;
+    }
 
-        header p {
-            font-size: 14px;
-            opacity: 0.9;
-        }
+    header p {
+        font-size: 13px;
+        opacity: 0.9;
+    }
 
-        .container {
-            max-width: 600px;
-            margin: 20px auto;
-            padding: 0 15px;
-        }
+    .container {
+        max-width: 600px;
+        margin: 20px auto;
+        padding: 0 15px;
+    }
 
-        .section-title {
-            font-size: 18px;
-            margin: 25px 0 10px 0;
-            color: var(--primary);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            border-left: 4px solid var(--primary);
-            padding-left: 8px;
-        }
+    .section-title {
+        font-size: 18px;
+        margin: 25px 0 10px 0;
+        color: var(--primary);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        border-left: 4px solid var(--primary);
+        padding-left: 8px;
+        transition: color 0.3s, border-color 0.3s;
+    }
 
-        .notice-card {
-            background-color: var(--card-bg);
-            border-radius: 12px;
-            padding: 15px;
-            margin-bottom: 15px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            border-top: 4px solid var(--accent);
-        }
+    .notice-card {
+        background-color: var(--card-bg);
+        border-radius: 12px;
+        padding: 15px;
+        margin-bottom: 15px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        border-top: 4px solid var(--primary);
+        transition: border-color 0.3s;
+    }
 
-        .notice-card ul {
-            list-style-type: none;
-        }
+    .notice-card ul { list-style-type: none; }
+    .notice-card li {
+        margin-bottom: 8px;
+        font-size: 14px;
+        position: relative;
+        padding-left: 20px;
+    }
+    .notice-card li::before {
+        content: "💡";
+        position: absolute;
+        left: 0;
+        top: 0;
+    }
 
-        .notice-card li {
-            margin-bottom: 8px;
-            font-size: 14px;
-            position: relative;
-            padding-left: 20px;
-        }
+    /* Tabs Day Navigation */
+    .day-nav {
+        display: flex;
+        overflow-x: auto;
+        gap: 8px;
+        padding: 10px 0;
+        position: sticky;
+        top: 0;
+        background-color: var(--primary-light);
+        z-index: 100;
+        margin-bottom: 15px;
+        transition: background-color 0.3s ease;
+    }
 
-        .notice-card li::before {
-            content: "💡";
-            position: absolute;
-            left: 0;
-            top: 0;
-        }
+    .day-tab {
+        background-color: var(--card-bg);
+        padding: 6px 16px;
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: 500;
+        white-space: nowrap;
+        cursor: pointer;
+        border: 1px solid #E0E0E0;
+        text-decoration: none;
+        color: var(--text-muted);
+        box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+        transition: all 0.2s ease;
+    }
 
-        /* Tabs Day Navigation */
-        .day-nav {
-            display: flex;
-            overflow-x: auto;
-            gap: 10px;
-            padding: 10px 0;
-            position: sticky;
-            top: 0;
-            background-color: var(--bg);
-            z-index: 100;
-            margin-bottom: 15px;
-        }
+    /* 被點選到的 Day 按鈕樣式 */
+    .day-tab.active {
+        background-color: var(--primary);
+        color: white;
+        border-color: var(--primary);
+        font-weight: bold;
+    }
 
-        .day-tab {
-            background-color: var(--card-bg);
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 14px;
-            font-weight: bold;
-            white-space: nowrap;
-            cursor: pointer;
-            border: 1px solid #E0E0E0;
-            text-decoration: none;
-            color: var(--text);
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        }
+    /* Timeline Items */
+    .day-section {
+        margin-bottom: 35px;
+        scroll-margin-top: 60px;
+    }
 
-        .day-tab:hover, .day-tab.active {
-            background-color: var(--primary);
-            color: white;
-            border-color: var(--primary);
-        }
+    .day-header {
+        background-color: var(--card-bg);
+        color: var(--primary);
+        border: 1px solid var(--border-color);
+        padding: 10px 15px;
+        border-radius: 8px;
+        font-weight: bold;
+        margin-bottom: 15px;
+        font-size: 16px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        transition: color 0.3s, border-color 0.3s;
+    }
 
-        /* Timeline Items */
-        .day-section {
-            margin-bottom: 35px;
-            scroll-margin-top: 60px;
-        }
+    .timeline {
+        position: relative;
+        padding-left: 20px;
+        border-left: 2px solid var(--border-color);
+        margin-left: 10px;
+        transition: border-color 0.3s;
+    }
 
-        .day-header {
-            background-color: var(--primary-light);
-            color: var(--primary);
-            padding: 10px 15px;
-            border-radius: 8px;
-            font-weight: bold;
-            margin-bottom: 15px;
-            font-size: 16px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
-        }
+    .timeline-item {
+        position: relative;
+        background-color: var(--card-bg);
+        border-radius: 12px;
+        padding: 15px;
+        margin-bottom: 15px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        border: 1px solid var(--border-color);
+        transition: border-color 0.3s;
+    }
 
-        .timeline {
-            position: relative;
-            padding-left: 20px;
-            border-left: 2px solid #E0E0E0;
-            margin-left: 10px;
-        }
+    .timeline-item::before {
+        content: "";
+        position: absolute;
+        left: -27px;
+        top: 20px;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background-color: var(--primary);
+        border: 2px solid white;
+        transition: background-color 0.3s;
+    }
 
-        .timeline-item {
-            position: relative;
-            background-color: var(--card-bg);
-            border-radius: 12px;
-            padding: 15px;
-            margin-bottom: 15px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        }
+    .time-slot {
+        font-weight: bold;
+        color: var(--primary);
+        font-size: 14px;
+        margin-bottom: 5px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: color 0.3s;
+    }
 
-        .timeline-item::before {
-            content: "";
-            position: absolute;
-            left: -27px;
-            top: 20px;
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background-color: var(--primary);
-            border: 2px solid white;
-        }
+    .spot-name {
+        font-size: 16px;
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
 
-        .time-slot {
-            font-weight: bold;
-            color: var(--primary);
-            font-size: 14px;
-            margin-bottom: 5px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+    .korean-address {
+        font-size: 12px;
+        color: var(--text-muted);
+        background-color: #F1F3F5;
+        padding: 4px 8px;
+        border-radius: 4px;
+        margin-bottom: 8px;
+        word-break: break-all;
+    }
 
-        .spot-name {
-            font-size: 16px;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
+    .info-badge {
+        display: inline-block;
+        font-size: 11px;
+        padding: 2px 6px;
+        border-radius: 4px;
+        margin-right: 5px;
+        font-weight: bold;
+    }
 
-        .korean-address {
-            font-size: 12px;
-            color: var(--text-muted);
-            background-color: #F1F3F5;
-            padding: 4px 8px;
-            border-radius: 4px;
-            margin-bottom: 8px;
-            word-break: break-all;
-        }
+    .badge-chair-y { background-color: #E6F4EA; color: var(--success); }
+    .badge-chair-n { background-color: #FCE8E6; color: var(--danger); }
+    .badge-rain { background-color: #E8F0FE; color: var(--accent); }
 
-        .info-badge {
-            display: inline-block;
-            font-size: 11px;
-            padding: 2px 6px;
-            border-radius: 4px;
-            margin-right: 5px;
-            font-weight: bold;
-        }
+    .notes {
+        font-size: 13px;
+        color: #555555;
+        background-color: #FAFBFB;
+        border-left: 3px solid #CCC;
+        padding: 6px 10px;
+        margin-top: 8px;
+        border-radius: 0 4px 4px 0;
+    }
 
-        .badge-chair-y { background-color: #E6F4EA; color: var(--success); }
-        .badge-chair-n { background-color: #FCE8E6; color: var(--danger); }
-        .badge-rain { background-color: #E8F0FE; color: var(--accent); }
+    .map-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        background-color: var(--primary);
+        color: white;
+        text-decoration: none;
+        font-size: 12px;
+        padding: 6px 12px;
+        border-radius: 6px;
+        margin-top: 10px;
+        font-weight: bold;
+        width: fit-content;
+        transition: background-color 0.3s;
+    }
 
-        .notes {
-            font-size: 13px;
-            color: #555555;
-            background-color: #FAFBFB;
-            border-left: 3px solid #CCC;
-            padding: 6px 10px;
-            margin-top: 8px;
-            border-radius: 0 4px 4px 0;
-        }
+    .map-btn:hover { opacity: 0.9; }
 
-        .map-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            background-color: #03C75A;
-            color: white;
-            text-decoration: none;
-            font-size: 12px;
-            padding: 6px 12px;
-            border-radius: 6px;
-            margin-top: 10px;
-            font-weight: bold;
-            width: fit-content;
-        }
+    .nav-footer {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background-color: white;
+        box-shadow: 0 -2px 10px rgba(0,0,0,0.06);
+        display: flex;
+        justify-content: space-around;
+        padding: 10px 0;
+        z-index: 1000;
+    }
 
-        .map-btn:hover {
-            opacity: 0.9;
-        }
+    .nav-footer-btn {
+        font-size: 12px;
+        text-align: center;
+        color: var(--text-muted);
+        text-decoration: none;
+    }
 
-        .nav-footer {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background-color: white;
-            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
-            display: flex;
-            justify-content: space-around;
-            padding: 10px 0;
-            z-index: 1000;
-        }
-
-        .nav-footer-btn {
-            font-size: 12px;
-            text-align: center;
-            color: var(--text-muted);
-            text-decoration: none;
-        }
-
-        .nav-footer-btn.active {
-            color: var(--primary);
-            font-weight: bold;
-        }
-
-        /* 🟢 新增：記帳區塊專用樣式 */
-        .accounting-form {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            margin-top: 10px;
-        }
-        .accounting-input-group {
-            display: flex;
-            gap: 8px;
-        }
-        .accounting-input {
-            padding: 8px 12px;
-            border: 1px solid #E0E0E0;
-            border-radius: 6px;
-            font-size: 14px;
-        }
-        .accounting-btn {
-            background-color: var(--primary);
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 6px;
-            font-weight: bold;
-            cursor: pointer;
-            font-size: 14px;
-        }
-        .accounting-list {
-            list-style: none;
-            margin-top: 10px;
-            max-height: 200px;
-            overflow-y: auto;
-        }
-        .accounting-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 6px 0;
-            border-bottom: 1px dashed #E0E0E0;
-            font-size: 14px;
-        }
-        .delete-btn {
-            background: none;
-            border: none;
-            color: var(--danger);
-            cursor: pointer;
-            font-size: 12px;
-        }
-        .total-amount {
-            font-size: 15px;
-            font-weight: bold;
-            color: var(--primary);
-            text-align: right;
-            margin-top: 10px;
-            padding-top: 5px;
-            border-top: 1px solid #E0E0E0;
-        }
-    </style>
+    .nav-footer-btn.active {
+        color: var(--primary);
+        font-weight: bold;
+        transition: color 0.3s;
+    }
+</style>
 </head>
 <body>
 
