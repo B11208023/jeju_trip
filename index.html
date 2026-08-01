@@ -2172,16 +2172,6 @@
 
     </div>
 
-    <!-- 底部固定導覽列 -->
-    <div class="nav-footer">
-        <button class="nav-footer-btn active" id="footer-btn-home" onclick="switchView('home')">🏠<br>首頁</button>
-        <button class="nav-footer-btn" id="footer-btn-day1" onclick="switchView('day1')">D1<br>9/2</button>
-        <button class="nav-footer-btn" id="footer-btn-day2" onclick="switchView('day2')">D2<br>9/3</button>
-        <button class="nav-footer-btn" id="footer-btn-day3" onclick="switchView('day3')">D3<br>9/4</button>
-        <button class="nav-footer-btn" id="footer-btn-day4" onclick="switchView('day4')">D4<br>9/5</button>
-        <button class="nav-footer-btn" id="footer-btn-day5" onclick="switchView('day5')">D5<br>9/6</button>
-        <button class="nav-footer-btn" id="footer-btn-day6" onclick="switchView('day6')">D6<br>9/7</button>
-    </div>
 
     <!-- 載入 Firebase 核心套件 -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
@@ -2225,12 +2215,6 @@
             if (tabs[tabMap[targetView]]) {
                 tabs[tabMap[targetView]].classList.add('active');
             }
-
-            // 更新底部按鈕狀態
-            const footerBtns = document.querySelectorAll('.nav-footer-btn');
-            footerBtns.forEach(btn => btn.classList.remove('active'));
-            const activeFooterBtn = document.getElementById('footer-btn-' + targetView);
-            if (activeFooterBtn) activeFooterBtn.classList.add('active');
 
             // 滾動回頂部
             window.scrollTo({ top: 0, behavior: 'smooth' });
