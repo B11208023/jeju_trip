@@ -380,21 +380,21 @@
         display: inline-flex;
         align-items: center;
         gap: 4px;
-        background-color: #f0f0f0;
-        color: #555;
-        padding: 4px 10px;
-        border-radius: 6px;
-        font-size: 11px;
+        background-color: #ffffff;
+        color: var(--primary);
+        padding: 5px 12px;
+        border-radius: 15px;
+        font-size: 12px;
         font-weight: bold;
         cursor: pointer;
-        border: 1px dashed #ccc;
+        border: 1px dashed var(--primary);
         transition: all 0.2s ease;
     }
 
     .upload-photo-btn:hover {
-        background-color: #e5e5e5;
+        background-color: var(--primary-light);
     }
-        
+
     .nav-footer {
         position: fixed;
         bottom: 0;
@@ -403,7 +403,7 @@
         background-color: white;
         box-shadow: 0 -2px 10px rgba(0,0,0,0.06);
         display: flex;
-        justify-content: space-around;
+        justify-style: space-around;
         padding: 10px 0;
         z-index: 1000;
     }
@@ -413,6 +413,7 @@
         text-align: center;
         color: var(--text-muted);
         text-decoration: none;
+        font-weight: bold;
     }
 
     .nav-footer-btn.active {
@@ -536,6 +537,8 @@
                         <span class="info-badge badge-chair-n">餐椅 ✘</span>
                         <div class="korean-address">제주 제주시 용해로 85 1층</div>
                         <a href="https://naver.me/F2L663A3" target="_blank" class="map-btn">🗺️ Naver Map</a>
+                         <div class="photo-section"><label class="upload-photo-btn">📷 新增照片 <input type="file" accept="image/*" multiple style="display:none;"></label><div class="photo-gallery" id="gallery-d1-1"></div></div>
+                    </div>
                     </div>
 
                     <div class="timeline-item">
@@ -589,6 +592,8 @@
                         <span class="info-badge badge-chair-y">餐椅 ✓</span><span class="info-badge badge-chair-y">可預約</span>
                         <div class="korean-address">제주 제주시 월정1길 16-1 월고집</div>
                         <a href="https://naver.me/5CCo80Wl" target="_blank" class="map-btn">🗺️ Naver Map</a>
+                         <div class="photo-section"><label class="upload-photo-btn">📷 新增照片 <input type="file" accept="image/*" multiple style="display:none;"></label><div class="photo-gallery" id="gallery-d1-1"></div></div>
+                    </div>
                     </div>
 
                     <div class="timeline-item">
@@ -638,6 +643,8 @@
                             • 打卡送可樂
                         </div>
                         <a href="https://naver.me/GmpxjYcL" target="_blank" class="map-btn">🗺️ Naver Map</a>
+                         <div class="photo-section"><label class="upload-photo-btn">📷 新增照片 <input type="file" accept="image/*" multiple style="display:none;"></label><div class="photo-gallery" id="gallery-d1-1"></div></div>
+                    </div>
                     </div>
 
                     <div class="timeline-item">
@@ -693,6 +700,8 @@
                         <div class="notes">黑豬肉花生漢堡，但是有狗 •᷄‎ࡇ•᷅ .ᐟ .ᐟ</div>
                         <div class="korean-address">제주 제주시 우도해안길 532 하하호호</div>
                         <a href="https://naver.me/GbyI00GP" target="_blank" class="map-btn">🗺️ Naver Map</a>
+                         <div class="photo-section"><label class="upload-photo-btn">📷 新增照片 <input type="file" accept="image/*" multiple style="display:none;"></label><div class="photo-gallery" id="gallery-d1-1"></div></div>
+                    </div>
                     </div>
 
                     <div class="timeline-item">
@@ -731,6 +740,8 @@
                         <span class="info-badge badge-chair-y">餐椅 ✓</span>
                         <div class="korean-address">제주 제주시 해맞이해안로 1282</div>
                         <a href="https://naver.me/GtYo0GGW" target="_blank" class="map-btn">🗺️ Naver Map</a>
+                         <div class="photo-section"><label class="upload-photo-btn">📷 新增照片 <input type="file" accept="image/*" multiple style="display:none;"></label><div class="photo-gallery" id="gallery-d1-1"></div></div>
+                    </div>
                     </div>
 
                     <div class="timeline-item">
@@ -792,6 +803,8 @@
                             • 表演地點：B1 海洋劇場（⚠️ 注意：不在水族館內）
                         </div>
                         <a href="https://naver.me/FUifZJcl" target="_blank" class="map-btn">🗺️ Naver Map</a>
+                         <div class="photo-section"><label class="upload-photo-btn">📷 新增照片 <input type="file" accept="image/*" multiple style="display:none;"></label><div class="photo-gallery" id="gallery-d1-1"></div></div>
+                    </div>
                     </div>
 
                     <div class="timeline-item">
@@ -799,6 +812,8 @@
                         <div class="spot-name">白帶魚料理 (八道食堂 섭지코지본점)</div>
                         <span class="info-badge badge-chair-n">餐椅 ✘</span>
                         <div class="korean-address">제주 서귀포시 섭지코지로26번길 15 1층 팔도식당</div>
+                         <div class="photo-section"><label class="upload-photo-btn">📷 新增照片 <input type="file" accept="image/*" multiple style="display:none;"></label><div class="photo-gallery" id="gallery-d1-1"></div></div>
+                    </div>
                         <div class="notes">
                             💡 <b>重點提醒：</b>先去買 COMPOSE 再去吃飯！<br>
                             【COMPOSE 推薦飲品】蜜桃美式、芒果冰茶、生巧拿鐵
@@ -862,6 +877,8 @@
                         <div class="spot-name">橘子咖啡廳</div>
                         <div class="korean-address">제주 서귀포시 이어도로1027번길 34</div>
                         <a href="https://naver.me/xjYjntzk" target="_blank" class="map-btn">🗺️ Naver Map</a>
+                         <div class="photo-section"><label class="upload-photo-btn">📷 新增照片 <input type="file" accept="image/*" multiple style="display:none;"></label><div class="photo-gallery" id="gallery-d1-1"></div></div>
+                    </div>
                     </div>
 
                     <div class="timeline-item">
@@ -878,6 +895,8 @@
                         <div class="korean-address">제주 서귀포시 신화역사로 23</div>
                         <div class="notes">鎖定咖啡廳買茶包跟抹茶製品</div>
                         <a href="https://naver.me/FmGA4a7F" target="_blank" class="map-btn">🗺️ Naver Map</a>
+                         <div class="photo-section"><label class="upload-photo-btn">📷 新增照片 <input type="file" accept="image/*" multiple style="display:none;"></label><div class="photo-gallery" id="gallery-d1-1"></div></div>
+                    </div>
                     </div>
 
                     <div class="timeline-item">
@@ -900,6 +919,8 @@
                         <div class="spot-name">Haejigae Cafe</div>
                         <div class="korean-address">제주 제주시 애월북서길 52 . 1~2층</div>
                         <a href="https://naver.me/xtN0CV4T" target="_blank" class="map-btn">🗺️ Naver Map</a>
+                         <div class="photo-section"><label class="upload-photo-btn">📷 新增照片 <input type="file" accept="image/*" multiple style="display:none;"></label><div class="photo-gallery" id="gallery-d1-1"></div></div>
+                    </div>
                     </div>
 
                     <div class="timeline-item">
@@ -907,6 +928,8 @@
                         <div class="spot-name">문개어멍 (海鮮麵+炸物)</div>
                         <div class="korean-address">제주 제주시 가문동길 38 문개어멍</div>
                         <a href="https://naver.me/xONScFqM" target="_blank" class="map-btn">🗺️ Naver Map</a>
+                         <div class="photo-section"><label class="upload-photo-btn">📷 新增照片 <input type="file" accept="image/*" multiple style="display:none;"></label><div class="photo-gallery" id="gallery-d1-1"></div></div>
+                    </div>
                     </div>
 
                     <div class="timeline-item">
@@ -988,6 +1011,8 @@
                         <div class="spot-name">橘子蕎麥冷麵</div>
                         <div class="korean-address">제주 제주시 북성로 59 1층</div>
                         <a href="https://naver.me/GHL84fsp" target="_blank" class="map-btn">🗺️ Naver Map</a>
+                         <div class="photo-section"><label class="upload-photo-btn">📷 新增照片 <input type="file" accept="image/*" multiple style="display:none;"></label><div class="photo-gallery" id="gallery-d1-1"></div></div>
+                    </div>
                     </div>
 
                     <div class="timeline-item">
@@ -1042,6 +1067,8 @@
                         <span class="info-badge badge-chair-n">餐椅只有 1 張 ⚠️</span>
                         <div class="korean-address">제주 제주시 삼무로 11</div>
                         <a href="https://naver.me/xZKo2E47" target="_blank" class="map-btn">🗺️ Naver Map</a>
+                         <div class="photo-section"><label class="upload-photo-btn">📷 新增照片 <input type="file" accept="image/*" multiple style="display:none;"></label><div class="photo-gallery" id="gallery-d1-1"></div></div>
+                    </div>
                     </div>
 
                     <div class="timeline-item">
