@@ -8,8 +8,10 @@
     <!-- 1. 正確載入 Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Noto+Serif+TC:wght@400;600;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
-
+    <!-- 載入 Libertinus Serif -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/libertinus-serif@5.0.8/index.css">
+    <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Noto+Serif+TC:wght@400;600;700&display=swap" rel="stylesheet">
+    
     <!-- 2. CSS 樣式區域 -->
     <style>
     html {
@@ -35,9 +37,10 @@
     margin: 0;
     padding: 0;
     
-    /* 1. 中文、英文、數字全部優先採用 Noto Serif TC (思源宋體)
-       2. 韓文自動套用 Gowun Dodum */
-    font-family: 'Noto Serif TC', 'Gowun Dodum', "Apple LiSung", "LiSong Pro", serif;
+    /* 1. 英數優先套用 Libertinus Serif
+       2. 韓文套用 Gowun Dodum
+       3. 中文套用 Noto Serif TC (思源宋體) */
+    font-family: 'Libertinus Serif', 'Gowun Dodum', 'Noto Serif TC', "Apple LiSung", "LiSong Pro", serif;
 }
 
     body {
