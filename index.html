@@ -1083,33 +1083,57 @@ const jejuDayThemes = {
 };
 
         // 1. 切換顯示區塊 (首頁 或 Day 1~6)
-        function switchView(targetView) {
-            const sections = document.querySelectorAll('.view-section');
-            sections.forEach(sec => sec.classList.remove('active'));
+function switchView(targetView) {
+    // 切換區塊 active
+    const sections = document.querySelectorAll('.view-section');
+    sections.forEach(sec => sec.classList.remove('active'));
 
-            const activeSection = document.getElementById(targetView + '-view');
-            if (activeSection) {
-                activeSection.classList.add('active');
+    const activeSection = document.getElementById(targetView + '-view');
+    if (activeSection) {
+        activeSection.classList.add('active');
+    }
+
+    // 💡 動態移動匯率卡片位置
+    const rateCard = document.getElementById('currency-exchange-card');
+    const homeView = document.getElementById('home-view');
+    const container = document.querySelector('.container');
+
+    if (rateCard) {
+        if (targetView === 'home') {
+            // 首頁：把匯率卡片塞到 home-view 的最底部
+            if (homeView) {
+                homeView.appendChild(rateCard);
+                rateCard.style.marginTop = '25px';
+                rateCard.style.marginBottom = '20px';
             }
-
-            // 更新主題配色
-            const theme = jejuDayThemes[targetView] || jejuDayThemes['home'];
-            document.documentElement.style.setProperty('--primary', theme.primary);
-            document.documentElement.style.setProperty('--primary-light', theme.bg);
-            document.documentElement.style.setProperty('--border-color', theme.border);
-
-            // 更新頂部按鈕狀態
-            const tabs = document.querySelectorAll('.day-tab');
-            tabs.forEach(tab => tab.classList.remove('active'));
-
-            const tabMap = { 'home': 0, 'day1': 1, 'day2': 2, 'day3': 3, 'day4': 4, 'day5': 5, 'day6': 6 };
-            if (tabs[tabMap[targetView]]) {
-                tabs[tabMap[targetView]].classList.add('active');
+        } else {
+            // Day 1 ~ Day 6：把匯率卡片移回 container 的最頂部
+            if (container) {
+                container.insertBefore(rateCard, container.firstChild);
+                rateCard.style.marginTop = '0px';
+                rateCard.style.marginBottom = '20px';
             }
-
-            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
+    }
 
+    // 更新主題配色
+    const theme = jejuDayThemes[targetView] || jejuDayThemes['home'];
+    document.documentElement.style.setProperty('--primary', theme.primary);
+    document.documentElement.style.setProperty('--primary-light', theme.bg);
+    document.documentElement.style.setProperty('--border-color', theme.border);
+
+    // 更新頂部按鈕狀態
+    const tabs = document.querySelectorAll('.day-tab');
+    tabs.forEach(tab => tab.classList.remove('active'));
+
+    const tabMap = { 'home': 0, 'day1': 1, 'day2': 2, 'day3': 3, 'day4': 4, 'day5': 5, 'day6': 6 };
+    if (tabs[tabMap[targetView]]) {
+        tabs[tabMap[targetView]].classList.add('active');
+    }
+
+    // 滾動回頂部
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
         // 2. 出發倒數計時計算邏輯
         function updateCountdown() {
             const targetDate = new Date('2026-09-02T00:00:00');
