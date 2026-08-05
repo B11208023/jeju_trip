@@ -330,6 +330,71 @@
 
     .map-btn:hover { opacity: 0.9; }
 
+/* 📸 照片功能專用 CSS */
+    .photo-section {
+        margin-top: 12px;
+        padding-top: 10px;
+        border-top: 1px dashed var(--border-color);
+    }
+
+    .photo-gallery {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 8px;
+    }
+
+    .photo-thumb-container {
+        position: relative;
+        width: 75px;
+        height: 75px;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .photo-thumb-container img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .photo-delete-btn {
+        position: absolute;
+        top: 2px;
+        right: 2px;
+        background: rgba(0,0,0,0.6);
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 18px;
+        height: 18px;
+        font-size: 10px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .upload-photo-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        background-color: #f0f0f0;
+        color: #555;
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-size: 11px;
+        font-weight: bold;
+        cursor: pointer;
+        border: 1px dashed #ccc;
+        transition: all 0.2s ease;
+    }
+
+    .upload-photo-btn:hover {
+        background-color: #e5e5e5;
+    }
+        
     .nav-footer {
         position: fixed;
         bottom: 0;
@@ -1234,13 +1299,104 @@ const jejuDayThemes = {
         if (calcAmountInput) calcAmountInput.addEventListener('input', updateConverter);
         if (calcCurrSelect) calcCurrSelect.addEventListener('change', updateConverter);
 
-        // 頁面初始化
+/* 📸 照片上傳與儲存邏輯 */
+        function initPhotoFeatures() {
+            const items = document.querySelectorAll('.timeline-item');
+            items.forEach(item => {
+                const itemId = item.getAttribute('data-id');
+                if (!itemId) return;
+
+                // 建立照片專用區域
+                const photoSection = document.createElement('div');
+                photoSection.className = 'photo-section';
+
+                const labelBtn = document.createElement('label');
+                labelBtn.className = 'upload-photo-btn';
+                labelBtn.innerHTML = `📷 新增照片 <input type="file" accept="image/*" multiple style="display:none;">`;
+
+                const gallery = document.createElement('div');
+                gallery.className = 'photo-gallery';
+                gallery.id = `gallery-${itemId}`;
+
+                photoSection.appendChild(labelBtn);
+                photoSection.appendChild(gallery);
+                item.appendChild(photoSection);
+
+                // 載入已被儲存的照片
+                loadPhotos(itemId, gallery);
+
+                // 監聽圖片選取事件
+                const fileInput = labelBtn.querySelector('input');
+                fileInput.addEventListener('change', (e) => handleImageUpload(e, itemId, gallery));
+            });
+        }
+
+        function handleImageUpload(event, itemId, gallery) {
+            const files = event.target.files;
+            if (!files.length) return;
+
+            Array.from(files).forEach(file => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const imgData = e.target.result;
+                    savePhoto(itemId, imgData);
+                    renderPhoto(itemId, imgData, gallery);
+                };
+                reader.readAsDataURL(file);
+            });
+            event.target.value = ''; // 清空輸入框
+        }
+
+        function renderPhoto(itemId, imgData, gallery) {
+            const container = document.createElement('div');
+            container.className = 'photo-thumb-container';
+
+            const img = document.createElement('img');
+            img.src = imgData;
+
+            const delBtn = document.createElement('button');
+            delBtn.className = 'photo-delete-btn';
+            delBtn.innerText = '✕';
+            delBtn.onclick = () => {
+                deletePhoto(itemId, imgData);
+                container.remove();
+            };
+
+            container.appendChild(img);
+            container.appendChild(delBtn);
+            gallery.appendChild(container);
+        }
+
+        function savePhoto(itemId, imgData) {
+            let photos = JSON.parse(localStorage.getItem(`jeju_photos_${itemId}`) || '[]');
+            photos.push(imgData);
+            try {
+                localStorage.setItem(`jeju_photos_${itemId}`, JSON.stringify(photos));
+            } catch (e) {
+                alert('圖片儲存空間已滿，建議清除部分照片或上傳較小檔案！');
+            }
+        }
+
+        function loadPhotos(itemId, gallery) {
+            let photos = JSON.parse(localStorage.getItem(`jeju_photos_${itemId}`) || '[]');
+            photos.forEach(imgData => {
+                renderPhoto(itemId, imgData, gallery);
+            });
+        }
+
+        function deletePhoto(itemId, imgData) {
+            let photos = JSON.parse(localStorage.getItem(`jeju_photos_${itemId}`) || '[]');
+            photos = photos.filter(p => p !== imgData);
+            localStorage.setItem(`jeju_photos_${itemId}`, JSON.stringify(photos));
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             updateCountdown();
             fetchJejuWeather();
             fetchLiveRates();
+            initPhotoFeatures();
             switchView('home');
         });
-    </script>   
+    </script>
 </body>
 </html>
