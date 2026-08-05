@@ -1231,55 +1231,57 @@ const jejuDayThemes = {
 
 // 抓取氣溫（白天/早晚）與降雨機率的 API
         async function fetchJejuWeather() {
-            try {
-                const url = 'https://api.open-meteo.com/v1/forecast?latitude=33.4996&longitude=126.5312&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=Asia%2FSeoul';
-                const res = await fetch(url);
-                const data = await res.json();
+    try {
+        const url = 'https://api.open-meteo.com/v1/forecast?latitude=33.4996&longitude=126.5312&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=Asia%2FSeoul';
+        const res = await fetch(url);
+        const data = await res.json();
 
-                if (data && data.daily) {
-                    const gridContainer = document.getElementById('weather-overview-grid');
-                    if (gridContainer && data.daily.temperature_2m_max) {
-                        const daysLabel = ['9/2 (三)', '9/3 (四)', '9/4 (五)', '9/5 (六)', '9/6 (日)', '9/7 (一)'];
-                        let html = '';
-                        for (let i = 0; i < 6; i++) {
-                            const maxTemp = Math.round(data.daily.temperature_2m_max[i] ?? 26); // 白天高溫
-                            const minTemp = Math.round(data.daily.temperature_2m_min[i] ?? 20); // 早晚低溫
-                            const pop = data.daily.precipitation_probability_max[i] ?? 0;
-                            const status = getWeatherCodeText(data.daily.weather_code[i] ?? 0);
+        if (data && data.daily) {
+            const gridContainer = document.getElementById('weather-overview-grid');
+            if (gridContainer && data.daily.temperature_2m_max) {
+                const daysLabel = ['9/2 (三)', '9/3 (四)', '9/4 (五)', '9/5 (六)', '9/6 (日)', '9/7 (一)'];
+                let html = '';
+                for (let i = 0; i < 6; i++) {
+                    const maxTemp = Math.round(data.daily.temperature_2m_max[i] ?? 26);
+                    const minTemp = Math.round(data.daily.temperature_2m_min[i] ?? 20);
+                    const pop = data.daily.precipitation_probability_max[i] ?? 0;
+                    const status = getWeatherCodeText(data.daily.weather_code[i] ?? 0);
 
-                            html += `
-                                <div class="weather-grid-item">
-                                    <div class="day-name">${daysLabel[i]}</div>
-                                    <div style="font-size: 13px; font-weight: bold; margin-bottom: 2px;">${status}</div>
-                                    <div class="weather-details">
-                                        🌡️ <b>${minTemp}°C / ${maxTemp}°C</b><br>
-                                        🌧️ 降雨機率 <b>${pop}%</b>
-                                    </div>
-                                </div>
-                            `;
+                    // 1. 首頁概覽卡片格式
+                    html += `
+                        <div class="weather-grid-item">
+                            <div class="day-name">${daysLabel[i]}</div>
+                            <div style="font-size: 13px; font-weight: bold; margin-bottom: 2px;">${status}</div>
+                            <div class="weather-details">
+                                🌡️ <b>${minTemp}°C - ${maxTemp}°C</b><br>
+                                🌧️ 降雨機率 <b>${pop}%</b>
+                            </div>
+                        </div>
+                    `;
 
-                            const dayWeatherEl = document.getElementById(`day${i+1}-weather-info`);
-                            if (dayWeatherEl) {
-                                dayWeatherEl.innerHTML = `
-                                    預測天氣：<b>${status}</b><br>
-                                    🌡️ 早晚／白天氣溫：<b>${minTemp}°C / ${maxTemp}°C</b><br>
-                                    🌧️ 降雨機率：<b>${pop}%</b>
-                                `;
-                            }
-                        }
-                        gridContainer.innerHTML = html;
-                    }
-
-                    const timeEl = document.getElementById('overview-update-time');
-                    if (timeEl) {
-                        const nowStr = new Date().toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit' });
-                        timeEl.innerText = `即時連線更新時間：${nowStr}`;
+                    // 2. 各天頁面頂部卡片格式
+                    const dayWeatherEl = document.getElementById(`day${i+1}-weather-info`);
+                    if (dayWeatherEl) {
+                        dayWeatherEl.innerHTML = `
+                            預測天氣：<b>${status}</b><br>
+                            🌡️ 氣溫：<b>${minTemp}°C - ${maxTemp}°C</b><br>
+                            🌧️ 降雨機率：<b>${pop}%</b>
+                        `;
                     }
                 }
-            } catch (e) {
-                console.log('天氣資料讀取失敗', e);
+                gridContainer.innerHTML = html;
+            }
+
+            const timeEl = document.getElementById('overview-update-time');
+            if (timeEl) {
+                const nowStr = new Date().toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit' });
+                timeEl.innerText = `即時連線更新時間：${nowStr}`;
             }
         }
+    } catch (e) {
+        console.log('天氣資料讀取失敗', e);
+    }
+}
 
         // 全域匯率變數
         let exchangeRates = {
