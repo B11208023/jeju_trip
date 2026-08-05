@@ -214,7 +214,6 @@
     /* Timeline Items */
     .day-section {
         margin-bottom: 35px;
-        scroll-margin-top: 60px;
     }
 
     .day-header {
@@ -227,7 +226,6 @@
         margin-bottom: 15px;
         font-size: 16px;
         box-shadow: 0 2px 4px rgba(0,0,0,0.02);
-        transition: color 0.3s, border-color 0.3s;
     }
 
     .timeline {
@@ -235,7 +233,6 @@
         padding-left: 20px;
         border-left: 2px solid var(--border-color);
         margin-left: 10px;
-        transition: border-color 0.3s;
     }
 
     .timeline-item {
@@ -246,7 +243,6 @@
         margin-bottom: 15px;
         box-shadow: 0 2px 8px rgba(0,0,0,0.04);
         border: 1px solid var(--border-color);
-        transition: border-color 0.3s;
     }
 
     .timeline-item::before {
@@ -259,7 +255,6 @@
         border-radius: 50%;
         background-color: var(--primary);
         border: 2px solid white;
-        transition: background-color 0.3s;
     }
 
     .time-slot {
@@ -270,7 +265,6 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        transition: color 0.3s;
     }
 
     .spot-name {
@@ -300,7 +294,6 @@
 
     .badge-chair-y { background-color: #E6F4EA; color: var(--success); }
     .badge-chair-n { background-color: #FCE8E6; color: var(--danger); }
-    .badge-rain { background-color: #E8F0FE; color: var(--accent); }
 
     .notes {
         font-size: 13px;
@@ -325,12 +318,9 @@
         margin-top: 10px;
         font-weight: bold;
         width: fit-content;
-        transition: background-color 0.3s;
     }
 
-    .map-btn:hover { opacity: 0.9; }
-
-/* 📸 照片功能專用 CSS */
+    /* 📸 照片功能專用 CSS */
     .photo-section {
         margin-top: 12px;
         padding-top: 10px;
@@ -393,33 +383,6 @@
 
     .upload-photo-btn:hover {
         background-color: var(--primary-light);
-    }
-
-    .nav-footer {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        background-color: white;
-        box-shadow: 0 -2px 10px rgba(0,0,0,0.06);
-        display: flex;
-        justify-style: space-around;
-        padding: 10px 0;
-        z-index: 1000;
-    }
-
-    .nav-footer-btn {
-        font-size: 12px;
-        text-align: center;
-        color: var(--text-muted);
-        text-decoration: none;
-        font-weight: bold;
-    }
-
-    .nav-footer-btn.active {
-        color: var(--primary);
-        font-weight: bold;
-        transition: color 0.3s;
     }
     </style>
 </head>
@@ -1330,97 +1293,102 @@ const jejuDayThemes = {
         if (calcAmountInput) calcAmountInput.addEventListener('input', updateConverter);
         if (calcCurrSelect) calcCurrSelect.addEventListener('change', updateConverter);
 
-/* 📸 照片上傳與儲存邏輯 */
-        function initPhotoFeatures() {
-            const items = document.querySelectorAll('.timeline-item');
-            items.forEach(item => {
-                const itemId = item.getAttribute('data-id');
-                if (!itemId) return;
+// 3. 📸 照片上傳與相片牆功能 (含圖片壓縮與 localStorage 本地儲存)
+    function initPhotoFeatures() {
+        const items = document.querySelectorAll('.timeline-item');
+        
+        items.forEach(item => {
+            const itemId = item.getAttribute('data-id');
+            if(!itemId) return;
 
-                // 建立照片專用區域
-                const photoSection = document.createElement('div');
-                photoSection.className = 'photo-section';
+            // 動態創建照片區域 HTML
+            const photoSection = document.createElement('div');
+            photoSection.className = 'photo-section';
+            photoSection.innerHTML = `
+                <label class="upload-photo-btn">
+                    📷 新增照片
+                    <input type="file" accept="image/*" style="display:none;" onchange="handleImageUpload(event, '${itemId}')">
+                </label>
+                <div class="photo-gallery" id="gallery-${itemId}"></div>
+            `;
+            item.appendChild(photoSection);
 
-                const labelBtn = document.createElement('label');
-                labelBtn.className = 'upload-photo-btn';
-                labelBtn.innerHTML = `📷 新增照片 <input type="file" accept="image/*" multiple style="display:none;">`;
+            // 載入已儲存的照片
+            renderPhotos(itemId);
+        });
+    }
 
-                const gallery = document.createElement('div');
-                gallery.className = 'photo-gallery';
-                gallery.id = `gallery-${itemId}`;
+    function handleImageUpload(event, itemId) {
+        const file = event.target.files[0];
+        if(!file) return;
 
-                photoSection.appendChild(labelBtn);
-                photoSection.appendChild(gallery);
-                item.appendChild(photoSection);
+        // 使用 Canvas 壓縮圖片以利存入 localStorage
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const img = new Image();
+            img.src = e.target.result;
+            img.onload = function() {
+                const canvas = document.createElement('canvas');
+                const maxDim = 800; // 壓縮最大邊長
+                let width = img.width;
+                let height = img.height;
 
-                // 載入已被儲存的照片
-                loadPhotos(itemId, gallery);
+                if (width > height && width > maxDim) {
+                    height *= maxDim / width;
+                    width = maxDim;
+                } else if (height > maxDim) {
+                    width *= maxDim / height;
+                    height = maxDim;
+                }
 
-                // 監聽圖片選取事件
-                const fileInput = labelBtn.querySelector('input');
-                fileInput.addEventListener('change', (e) => handleImageUpload(e, itemId, gallery));
-            });
-        }
-
-        function handleImageUpload(event, itemId, gallery) {
-            const files = event.target.files;
-            if (!files.length) return;
-
-            Array.from(files).forEach(file => {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const imgData = e.target.result;
-                    savePhoto(itemId, imgData);
-                    renderPhoto(itemId, imgData, gallery);
-                };
-                reader.readAsDataURL(file);
-            });
-            event.target.value = ''; // 清空輸入框
-        }
-
-        function renderPhoto(itemId, imgData, gallery) {
-            const container = document.createElement('div');
-            container.className = 'photo-thumb-container';
-
-            const img = document.createElement('img');
-            img.src = imgData;
-
-            const delBtn = document.createElement('button');
-            delBtn.className = 'photo-delete-btn';
-            delBtn.innerText = '✕';
-            delBtn.onclick = () => {
-                deletePhoto(itemId, imgData);
-                container.remove();
-            };
-
-            container.appendChild(img);
-            container.appendChild(delBtn);
-            gallery.appendChild(container);
-        }
-
-        function savePhoto(itemId, imgData) {
-            let photos = JSON.parse(localStorage.getItem(`jeju_photos_${itemId}`) || '[]');
-            photos.push(imgData);
-            try {
-                localStorage.setItem(`jeju_photos_${itemId}`, JSON.stringify(photos));
-            } catch (e) {
-                alert('圖片儲存空間已滿，建議清除部分照片或上傳較小檔案！');
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+                
+                const compressedBase64 = canvas.toDataURL('image/jpeg', 0.7);
+                savePhotoToStorage(itemId, compressedBase64);
             }
         }
+        reader.readAsDataURL(file);
+    }
 
-        function loadPhotos(itemId, gallery) {
-            let photos = JSON.parse(localStorage.getItem(`jeju_photos_${itemId}`) || '[]');
-            photos.forEach(imgData => {
-                renderPhoto(itemId, imgData, gallery);
-            });
+    function savePhotoToStorage(itemId, base64Data) {
+        let photos = JSON.parse(localStorage.getItem('jeju_photos_' + itemId) || '[]');
+        photos.push(base64Data);
+        try {
+            localStorage.setItem('jeju_photos_' + itemId, JSON.stringify(photos));
+            renderPhotos(itemId);
+        } catch(e) {
+            alert('儲存空間已滿，請刪除部分舊照片後再試！');
         }
+    }
 
-        function deletePhoto(itemId, imgData) {
-            let photos = JSON.parse(localStorage.getItem(`jeju_photos_${itemId}`) || '[]');
-            photos = photos.filter(p => p !== imgData);
-            localStorage.setItem(`jeju_photos_${itemId}`, JSON.stringify(photos));
-        }
+    function renderPhotos(itemId) {
+        const gallery = document.getElementById(`gallery-${itemId}`);
+        if(!gallery) return;
 
+        let photos = JSON.parse(localStorage.getItem('jeju_photos_' + itemId) || '[]');
+        gallery.innerHTML = '';
+
+        photos.forEach((photoData, index) => {
+            const container = document.createElement('div');
+            container.className = 'photo-thumb-container';
+            container.innerHTML = `
+                <img src="${photoData}">
+                <button class="photo-delete-btn" onclick="deletePhoto('${itemId}', ${index})">✕</button>
+            `;
+            gallery.appendChild(container);
+        });
+    }
+
+    function deletePhoto(itemId, index) {
+        let photos = JSON.parse(localStorage.getItem('jeju_photos_' + itemId) || '[]');
+        photos.splice(index, 1);
+        localStorage.setItem('jeju_photos_' + itemId, JSON.stringify(photos));
+        renderPhotos(itemId);
+    }
+        
         document.addEventListener('DOMContentLoaded', () => {
             updateCountdown();
             fetchJejuWeather();
