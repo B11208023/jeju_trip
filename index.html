@@ -1045,16 +1045,16 @@
 
     <!-- 主程式邏輯 -->
     <script>
-        // 🍊 濟州 6 日低飽和度莫蘭迪色彩對照表
-        const jejuDayThemes = {
-            'home': { primary: '#E89B6C', bg: '#FAF4EF', border: '#F0E0D6' },
-            'day1': { primary: '#E2B4BD', bg: '#FDF7F8', border: '#F4DCD6' },
-            'day2': { primary: '#5C94B2', bg: '#F0F5F8', border: '#CCE1EC' },
-            'day3': { primary: '#D8B26E', bg: '#FAF6EE', border: '#ECE2D0' },
-            'day4': { primary: '#6FA080', bg: '#F1F6F3', border: '#D3E3DA' },
-            'day5': { primary: '#9A81A8', bg: '#F7F3F8', border: '#E2D7E8' },
-            'day6': { primary: '#6B7280', bg: '#F4F5F7', border: '#D1D5DB' },
-        };
+        // 🍊 濟州 6 日低飽和度柔和莫蘭迪色彩對照表
+const jejuDayThemes = {
+    'home': { primary: '#E89B6C', bg: '#FAF4EF', border: '#F0E0D6' }, // 首頁 經典奶油橘
+    'day1': { primary: '#E2B4BD', bg: '#FDF7F8', border: '#F4DCD6' }, // Day 1 莫蘭迪蜜桃粉
+    'day2': { primary: '#88A8B9', bg: '#F2F6F8', border: '#DCE6EC' }, // Day 2 粉霧奶油藍
+    'day3': { primary: '#D8B880', bg: '#FAF6EF', border: '#EFE5D3' }, // Day 3 柔和奶油黃
+    'day4': { primary: '#91AB98', bg: '#F3F6F4', border: '#DEE6E0' }, // Day 4 鼠尾草奶綠
+    'day5': { primary: '#B29DBE', bg: '#F8F5F9', border: '#E7DFEB' }, // Day 5 煙燻芋泥紫
+    'day6': { primary: '#9CA3AF', bg: '#F5F6F8', border: '#E1E3E8' }, // Day 6 燕麥雲朵灰
+};
 
         // 1. 切換顯示區塊 (首頁 或 Day 1~6)
         function switchView(targetView) {
