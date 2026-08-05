@@ -30,12 +30,15 @@
         --success: #2EA44F;
     }
 
-    * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-        font-family: 'Playfair Display', 'Gowun Dodum', 'Noto Serif TC', "Apple LiSung", "LiSong Pro", serif;
-    }
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    
+    /* 1. 英數與韓文皆優先吃 Gowun Dodum 
+       2. 中文套用 Noto Serif TC (思源宋體) */
+    font-family: 'Gowun Dodum', 'Noto Serif TC', "Apple LiSung", "LiSong Pro", serif;
+}
 
     body {
         background-color: var(--primary-light);
