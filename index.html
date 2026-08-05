@@ -375,7 +375,7 @@
 
     <div class="container">
 
-        <!-- 共用即時匯率換算區塊 -->
+        <!-- 💱 共用即時匯率換算區塊（全網頁唯獨一份） -->
         <div id="currency-exchange-card" style="background: #ffffff; border: 1px solid #e0e0e0; border-radius: 10px; padding: 16px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
             <h3 style="margin-top: 0; margin-bottom: 8px; font-size: 1.1em; color: #333;">
                 💱 今日即時匯率試算
@@ -441,32 +441,6 @@
                 <p style="font-size: 13px; margin-bottom: 5px;"><b>舊款 iPhone (Lightning)：</b>拜託必帶「原廠線」，副廠死亡率很高</p>
                 <p style="font-size: 13px;"><b>新款 iPhone (15以上)：</b>線不一定要原廠，但必備「USB-A 轉接頭」</p>
             </div>
-
-            <!-- 💱 今日即時匯率試算 (已移至首頁最下方) -->
-            <div id="currency-exchange-card" style="background: #ffffff; border: 1px solid #e0e0e0; border-radius: 10px; padding: 16px; margin-top: 25px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
-                <h3 style="margin-top: 0; margin-bottom: 8px; font-size: 1.1em; color: #333;">
-                    💱 今日即時匯率試算
-                </h3>
-                <div id="rate-status" style="font-size: 0.82em; color: #666; margin-bottom: 12px;">
-                    🔄 正在連線讀取今日最新匯率...
-                </div>
-
-                <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 8px;">
-                    <input type="number" id="calc-foreign-amount" placeholder="外幣金額" value="10000" style="flex: 1; min-width: 100px; padding: 8px; border: 1px solid #ccc; border-radius: 6px;">
-                    
-                    <select id="calc-foreign-curr" style="padding: 8px; border: 1px solid #ccc; border-radius: 6px; background: white;">
-                        <option value="KRW">韓元 (KRW)</option>
-                        <option value="TWD">台幣 (NTD)</option>
-                    </select>
-
-                    <span style="font-weight: bold; color: #666;">≈</span>
-
-                    <div style="flex: 1; min-width: 120px; background: #f8f9fa; padding: 8px 12px; border-radius: 6px; border: 1px solid #e0e0e0; font-weight: bold; color: #2c3e50;">
-                        NT$ <span id="calc-twd-result">0</span>
-                    </div>
-                </div>
-            </div>
-
         </div>
 
         <!-- ================= DAY 1 ================= -->
@@ -1082,39 +1056,36 @@ const jejuDayThemes = {
     'day6': { primary: '#9CA3AF', bg: '#F5F6F8', border: '#E1E3E8' }, // Day 6 燕麥雲朵灰
 };
 
-        // 1. 切換顯示區塊 (首頁 或 Day 1~6)
-function switchView(targetView) {
-    // 切換區塊 active
-    const sections = document.querySelectorAll('.view-section');
-    sections.forEach(sec => sec.classList.remove('active'));
+// 1. 切換顯示區塊 (首頁 或 Day 1~6)
+    function switchView(targetView) {
+        const sections = document.querySelectorAll('.view-section');
+        sections.forEach(sec => sec.classList.remove('active'));
 
-    const activeSection = document.getElementById(targetView + '-view');
-    if (activeSection) {
-        activeSection.classList.add('active');
-    }
+        const activeSection = document.getElementById(targetView + '-view');
+        if (activeSection) {
+            activeSection.classList.add('active');
+        }
 
-    // 💡 動態移動匯率卡片位置
-    const rateCard = document.getElementById('currency-exchange-card');
-    const homeView = document.getElementById('home-view');
-    const container = document.querySelector('.container');
+        // 💡 動態移動匯率卡片位置：首頁置底，其他天置頂
+        const rateCard = document.getElementById('currency-exchange-card');
+        const homeView = document.getElementById('home-view');
+        const container = document.querySelector('.container');
 
-    if (rateCard) {
-        if (targetView === 'home') {
-            // 首頁：把匯率卡片塞到 home-view 的最底部
-            if (homeView) {
-                homeView.appendChild(rateCard);
-                rateCard.style.marginTop = '25px';
-                rateCard.style.marginBottom = '20px';
-            }
-        } else {
-            // Day 1 ~ Day 6：把匯率卡片移回 container 的最頂部
-            if (container) {
-                container.insertBefore(rateCard, container.firstChild);
-                rateCard.style.marginTop = '0px';
-                rateCard.style.marginBottom = '20px';
+        if (rateCard) {
+            if (targetView === 'home') {
+                if (homeView) {
+                    homeView.appendChild(rateCard);
+                    rateCard.style.marginTop = '25px';
+                    rateCard.style.marginBottom = '20px';
+                }
+            } else {
+                if (container) {
+                    container.insertBefore(rateCard, container.firstChild);
+                    rateCard.style.marginTop = '0px';
+                    rateCard.style.marginBottom = '20px';
+                }
             }
         }
-    }
 
     // 更新主題配色
     const theme = jejuDayThemes[targetView] || jejuDayThemes['home'];
