@@ -62,6 +62,7 @@
     header h1 {
         font-size: 22px;
         margin-bottom: 5px;
+        font-weight: bold;
     }
 
     header p {
@@ -192,6 +193,7 @@
         padding: 6px 16px;
         border-radius: 20px;
         font-size: 14px;
+        font-weight: bold;
         font-weight: 500;
         white-space: nowrap;
         cursor: pointer;
@@ -1047,7 +1049,7 @@
     <script>
         // 🍊 濟州 6 日低飽和度柔和莫蘭迪色彩對照表
 const jejuDayThemes = {
-    'home': { primary: '#E89B6C', bg: '#FAF4EF', border: '#F0E0D6' }, // 首頁 經典奶油橘
+    'home': { primary: '#E0A990', bg: '#FAF5F2', border: '#F2E3DC' }, // 首頁 柔和奶油橘
     'day1': { primary: '#E2B4BD', bg: '#FDF7F8', border: '#F4DCD6' }, // Day 1 莫蘭迪蜜桃粉
     'day2': { primary: '#88A8B9', bg: '#F2F6F8', border: '#DCE6EC' }, // Day 2 粉霧奶油藍
     'day3': { primary: '#D8B880', bg: '#FAF6EF', border: '#EFE5D3' }, // Day 3 柔和奶油黃
@@ -1135,9 +1137,10 @@ const jejuDayThemes = {
             return '☁️ 多雲';
         }
 
+// 抓取氣溫（白天/早晚）與降雨機率的 API
         async function fetchJejuWeather() {
             try {
-                const url = 'https://api.open-meteo.com/v1/forecast?latitude=33.4996&longitude=126.5312&current=temperature_2m,weather_code&daily=temperature_2m_max,temperature_2m_min,weather_code&timezone=Asia%2FSeoul';
+                const url = 'https://api.open-meteo.com/v1/forecast?latitude=33.4996&longitude=126.5312&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=Asia%2FSeoul';
                 const res = await fetch(url);
                 const data = await res.json();
 
@@ -1147,20 +1150,29 @@ const jejuDayThemes = {
                         const daysLabel = ['9/2 (三)', '9/3 (四)', '9/4 (五)', '9/5 (六)', '9/6 (日)', '9/7 (一)'];
                         let html = '';
                         for (let i = 0; i < 6; i++) {
-                            const max = Math.round(data.daily.temperature_2m_max[i] || 26);
-                            const min = Math.round(data.daily.temperature_2m_min[i] || 20);
-                            const status = getWeatherCodeText(data.daily.weather_code[i] || 0);
+                            const maxTemp = Math.round(data.daily.temperature_2m_max[i] ?? 26); // 白天高溫
+                            const minTemp = Math.round(data.daily.temperature_2m_min[i] ?? 20); // 早晚低溫
+                            const pop = data.daily.precipitation_probability_max[i] ?? 0;
+                            const status = getWeatherCodeText(data.daily.weather_code[i] ?? 0);
+
                             html += `
                                 <div class="weather-grid-item">
                                     <div class="day-name">${daysLabel[i]}</div>
-                                    <div style="font-size: 13px; font-weight: bold;">${status}</div>
-                                    <div class="overview-temp" style="color: #555;">${min}°C ~ ${max}°C</div>
+                                    <div style="font-size: 13px; font-weight: bold; margin-bottom: 2px;">${status}</div>
+                                    <div class="weather-details">
+                                        🌡️ <b>${minTemp}°C / ${maxTemp}°C</b><br>
+                                        🌧️ 降雨機率 <b>${pop}%</b>
+                                    </div>
                                 </div>
                             `;
 
                             const dayWeatherEl = document.getElementById(`day${i+1}-weather-info`);
                             if (dayWeatherEl) {
-                                dayWeatherEl.innerHTML = `預測天氣：<b>${status}</b> ｜ 預估氣溫：<b>${min}°C ~ ${max}°C</b>`;
+                                dayWeatherEl.innerHTML = `
+                                    預測天氣：<b>${status}</b><br>
+                                    🌡️ 早晚／白天氣溫：<b>${minTemp}°C / ${maxTemp}°C</b><br>
+                                    🌧️ 降雨機率：<b>${pop}%</b>
+                                `;
                             }
                         }
                         gridContainer.innerHTML = html;
@@ -1169,7 +1181,7 @@ const jejuDayThemes = {
                     const timeEl = document.getElementById('overview-update-time');
                     if (timeEl) {
                         const nowStr = new Date().toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit' });
-                        timeEl.innerText = `即時更新時間：${nowStr}`;
+                        timeEl.innerText = `即時連線更新時間：${nowStr}`;
                     }
                 }
             } catch (e) {
