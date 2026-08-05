@@ -402,13 +402,13 @@
 
         <!-- ================= 🏠 首頁檢視區塊 ================= -->
         <div id="home-view" class="view-section active">
-            <!-- 出發倒數計時 -->
+            <!-- ⏳ 1. 出發倒數計時 -->
             <div class="countdown-card">
                 <div class="countdown-title">✈️ 距離濟州島之旅還有</div>
                 <div class="countdown-num" id="countdown-days">計算中...</div>
             </div>
 
-            <!-- 六天天氣概覽 -->
+            <!-- 🌤️ 2. 六天天氣概覽 -->
             <div class="weather-overview-card">
                 <div style="font-weight: bold; color: var(--primary); font-size: 15px; margin-bottom: 5px;">🌤️ 濟州島 6 天天氣概覽</div>
                 <div style="font-size: 11px; color: #888;" id="overview-update-time">即時連線更新中...</div>
@@ -422,7 +422,7 @@
                 </div>
             </div>
 
-            <!-- 行前須知 -->
+            <!-- 📌 行前須知 -->
             <div class="section-title">📌 行前必看須知</div>
             <div class="notice-card">
                 <ul>
@@ -435,12 +435,38 @@
                 </ul>
             </div>
 
-            <!-- CarPlay 須知 -->
+            <!-- 🚗 CarPlay 須知 -->
             <div class="section-title">🚗 車載 CarPlay 備忘</div>
             <div class="notice-card" style="border-top-color: #f39c12;">
                 <p style="font-size: 13px; margin-bottom: 5px;"><b>舊款 iPhone (Lightning)：</b>拜託必帶「原廠線」，副廠死亡率很高</p>
                 <p style="font-size: 13px;"><b>新款 iPhone (15以上)：</b>線不一定要原廠，但必備「USB-A 轉接頭」</p>
             </div>
+
+            <!-- 💱 今日即時匯率試算 (已移至首頁最下方) -->
+            <div id="currency-exchange-card" style="background: #ffffff; border: 1px solid #e0e0e0; border-radius: 10px; padding: 16px; margin-top: 25px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+                <h3 style="margin-top: 0; margin-bottom: 8px; font-size: 1.1em; color: #333;">
+                    💱 今日即時匯率試算
+                </h3>
+                <div id="rate-status" style="font-size: 0.82em; color: #666; margin-bottom: 12px;">
+                    🔄 正在連線讀取今日最新匯率...
+                </div>
+
+                <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 8px;">
+                    <input type="number" id="calc-foreign-amount" placeholder="外幣金額" value="10000" style="flex: 1; min-width: 100px; padding: 8px; border: 1px solid #ccc; border-radius: 6px;">
+                    
+                    <select id="calc-foreign-curr" style="padding: 8px; border: 1px solid #ccc; border-radius: 6px; background: white;">
+                        <option value="KRW">韓元 (KRW)</option>
+                        <option value="TWD">台幣 (NTD)</option>
+                    </select>
+
+                    <span style="font-weight: bold; color: #666;">≈</span>
+
+                    <div style="flex: 1; min-width: 120px; background: #f8f9fa; padding: 8px 12px; border-radius: 6px; border: 1px solid #e0e0e0; font-weight: bold; color: #2c3e50;">
+                        NT$ <span id="calc-twd-result">0</span>
+                    </div>
+                </div>
+            </div>
+
         </div>
 
         <!-- ================= DAY 1 ================= -->
