@@ -467,7 +467,7 @@
 
             <!-- 🚗 CarPlay 須知 -->
             <div class="section-title">🚗 <b>車載 CarPlay 備忘</b></div>
-            <div class="notice-card" style="border-top-color: #f39c12;">
+            <div class="notice-card" style="border-top-color: #E8A08A;">
                 <p style="font-size: 13px; margin-bottom: 5px;"><b>舊款 iPhone (Lightning)：</b>拜託必帶「原廠線」，副廠死亡率很高</p>
                 <p style="font-size: 13px;"><b>新款 iPhone (15以上)：</b>線不一定要原廠，但必備「USB-A 轉接頭」</p>
             </div>
@@ -1278,101 +1278,116 @@ const jejuDayThemes = {
         if (calcAmountInput) calcAmountInput.addEventListener('input', updateConverter);
         if (calcCurrSelect) calcCurrSelect.addEventListener('change', updateConverter);
 
-// 3. 📸 照片上傳與相片牆功能 (含圖片壓縮與 localStorage 本地儲存)
+// 📸 照片上傳與相片牆功能 (含圖片壓縮與 localStorage 本地儲存)
     function initPhotoFeatures() {
-        const items = document.querySelectorAll('.timeline-item');
-        
-        items.forEach(item => {
-            const itemId = item.getAttribute('data-id');
-            if(!itemId) return;
+            const items = document.querySelectorAll('.timeline-item');
+            items.forEach(item => {
+                const itemId = item.getAttribute('data-id');
+                if (!itemId) return;
 
-            // 動態創建照片區域 HTML
-            const photoSection = document.createElement('div');
-            photoSection.className = 'photo-section';
-            photoSection.innerHTML = `
-                <label class="upload-photo-btn">
-                    📷 新增照片
-                    <input type="file" accept="image/*" style="display:none;" onchange="handleImageUpload(event, '${itemId}')">
-                </label>
-                <div class="photo-gallery" id="gallery-${itemId}"></div>
-            `;
-            item.appendChild(photoSection);
+                // 防止重複創建
+                if (item.querySelector('.photo-section')) return;
 
-            // 載入已儲存的照片
-            renderPhotos(itemId);
-        });
-    }
+                const photoSection = document.createElement('div');
+                photoSection.className = 'photo-section';
 
-    function handleImageUpload(event, itemId) {
-        const file = event.target.files[0];
-        if(!file) return;
+                const labelBtn = document.createElement('label');
+                labelBtn.className = 'upload-photo-btn';
+                labelBtn.innerHTML = `📷 新增照片 <input type="file" accept="image/*" style="display:none;">`;
 
-        // 使用 Canvas 壓縮圖片以利存入 localStorage
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const img = new Image();
-            img.src = e.target.result;
-            img.onload = function() {
-                const canvas = document.createElement('canvas');
-                const maxDim = 800; // 壓縮最大邊長
-                let width = img.width;
-                let height = img.height;
+                const gallery = document.createElement('div');
+                gallery.className = 'photo-gallery';
+                gallery.id = `gallery-${itemId}`;
 
-                if (width > height && width > maxDim) {
-                    height *= maxDim / width;
-                    width = maxDim;
-                } else if (height > maxDim) {
-                    width *= maxDim / height;
-                    height = maxDim;
-                }
+                photoSection.appendChild(labelBtn);
+                photoSection.appendChild(gallery);
+                item.appendChild(photoSection);
 
-                canvas.width = width;
-                canvas.height = height;
-                const ctx = canvas.getContext('2d');
-                ctx.drawImage(img, 0, 0, width, height);
-                
-                const compressedBase64 = canvas.toDataURL('image/jpeg', 0.7);
-                savePhotoToStorage(itemId, compressedBase64);
-            }
+                loadPhotos(itemId, gallery);
+
+                const fileInput = labelBtn.querySelector('input');
+                fileInput.addEventListener('change', (e) => handleImageUpload(e, itemId, gallery));
+            });
         }
-        reader.readAsDataURL(file);
-    }
 
-    function savePhotoToStorage(itemId, base64Data) {
-        let photos = JSON.parse(localStorage.getItem('jeju_photos_' + itemId) || '[]');
-        photos.push(base64Data);
-        try {
-            localStorage.setItem('jeju_photos_' + itemId, JSON.stringify(photos));
-            renderPhotos(itemId);
-        } catch(e) {
-            alert('儲存空間已滿，請刪除部分舊照片後再試！');
+        function handleImageUpload(event, itemId, gallery) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.src = e.target.result;
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    const maxDim = 800;
+                    let width = img.width;
+                    let height = img.height;
+
+                    if (width > height && width > maxDim) {
+                        height *= maxDim / width;
+                        width = maxDim;
+                    } else if (height > maxDim) {
+                        width *= maxDim / height;
+                        height = maxDim;
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    const compressedBase64 = canvas.toDataURL('image/jpeg', 0.7);
+                    savePhoto(itemId, compressedBase64);
+                    renderPhoto(itemId, compressedBase64, gallery);
+                };
+            };
+            reader.readAsDataURL(file);
+            event.target.value = '';
         }
-    }
 
-    function renderPhotos(itemId) {
-        const gallery = document.getElementById(`gallery-${itemId}`);
-        if(!gallery) return;
-
-        let photos = JSON.parse(localStorage.getItem('jeju_photos_' + itemId) || '[]');
-        gallery.innerHTML = '';
-
-        photos.forEach((photoData, index) => {
+        function renderPhoto(itemId, imgData, gallery) {
             const container = document.createElement('div');
             container.className = 'photo-thumb-container';
-            container.innerHTML = `
-                <img src="${photoData}">
-                <button class="photo-delete-btn" onclick="deletePhoto('${itemId}', ${index})">✕</button>
-            `;
-            gallery.appendChild(container);
-        });
-    }
 
-    function deletePhoto(itemId, index) {
-        let photos = JSON.parse(localStorage.getItem('jeju_photos_' + itemId) || '[]');
-        photos.splice(index, 1);
-        localStorage.setItem('jeju_photos_' + itemId, JSON.stringify(photos));
-        renderPhotos(itemId);
-    }
+            const img = document.createElement('img');
+            img.src = imgData;
+
+            const delBtn = document.createElement('button');
+            delBtn.className = 'photo-delete-btn';
+            delBtn.innerText = '✕';
+            delBtn.onclick = () => {
+                deletePhoto(itemId, imgData);
+                container.remove();
+            };
+
+            container.appendChild(img);
+            container.appendChild(delBtn);
+            gallery.appendChild(container);
+        }
+
+        function savePhoto(itemId, imgData) {
+            let photos = JSON.parse(localStorage.getItem(`jeju_photos_${itemId}`) || '[]');
+            photos.push(imgData);
+            try {
+                localStorage.setItem(`jeju_photos_${itemId}`, JSON.stringify(photos));
+            } catch (e) {
+                alert('圖片儲存空間已滿，建議刪除部分舊照片！');
+            }
+        }
+
+        function loadPhotos(itemId, gallery) {
+            let photos = JSON.parse(localStorage.getItem(`jeju_photos_${itemId}`) || '[]');
+            photos.forEach(imgData => {
+                renderPhoto(itemId, imgData, gallery);
+            });
+        }
+
+        function deletePhoto(itemId, imgData) {
+            let photos = JSON.parse(localStorage.getItem(`jeju_photos_${itemId}`) || '[]');
+            photos = photos.filter(p => p !== imgData);
+            localStorage.setItem(`jeju_photos_${itemId}`, JSON.stringify(photos));
+        }
         
         document.addEventListener('DOMContentLoaded', () => {
             updateCountdown();
