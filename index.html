@@ -1186,20 +1186,6 @@ const jejuDayThemes = {
             activeSection.classList.add('active');
         }
 
-
-
-     // 💡 切換 Tab 檢視的函式
-    function switchView(targetView) {
-    //  1. 隱藏所有分頁（請確認您分頁區塊的 class 名稱，例如 .view 或 .tab-content）
-    document.querySelectorAll('.view').forEach(view => {
-        view.style.display = 'none';
-    });
-
-    // 2. 顯示點選的目标分頁
-    const targetViewEl = document.getElementById(targetView);
-    if (targetViewEl) {
-        targetViewEl.style.display = 'block';
-    }
     // 💡 動態移動匯率卡片位置：首頁置底，其他天置頂
     const rateCard = document.getElementById('currency-exchange-card');
     const homeView = document.getElementById('home-view');
