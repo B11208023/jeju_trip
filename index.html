@@ -319,6 +319,99 @@
         font-weight: bold;
         width: fit-content;
     }
+
+/* ==========================================
+   🖼️ 全螢幕照片彈窗 (Modal Lightbox)
+   ========================================== */
+.image-modal {
+    display: none;
+    position: fixed;
+    z-index: 99999;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(5px); /* 背景微微模糊 */
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+/* 顯示時彈出 */
+.image-modal.active {
+    display: flex;
+}
+
+.modal-content {
+    max-width: 95%;
+    max-height: 80vh;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+    object-fit: contain;
+}
+
+/* 關閉按鈕 ✕ */
+.modal-close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    color: #ffffff;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+/* ==========================================
+   📸 隨主題顏色變化的虛線照片按鈕
+   ========================================== */
+.photo-btn-container {
+    margin-top: 10px;
+    padding-top: 8px;
+    border-top: 1px dashed var(--border-color, #eee);
+}
+
+.view-photo-dashed-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 75px;  /* 75x75 正方形 */
+    height: 75px;
+    border: 2px dashed var(--primary); /* 自動套用主題顏色虛線 */
+    border-radius: 8px;
+    color: var(--primary); /* 自動套用主題文字顏色 */
+    background-color: color-mix(in srgb, var(--primary) 10%, transparent); /* 10% 濃度的淡色主題底 */
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    padding: 0;
+}
+
+.view-photo-dashed-btn:hover {
+    background-color: color-mix(in srgb, var(--primary) 20%, transparent);
+}
+
+.dashed-btn-icon {
+    font-size: 20px;
+    margin-bottom: 4px;
+}
+
+.dashed-btn-text {
+    font-size: 11px;
+    font-weight: bold;
+    text-align: center;
+    line-height: 1.2;
+}
     </style>
 </head>
 <body>
@@ -435,8 +528,10 @@
                         <span class="info-badge badge-chair-y">餐椅 ✓</span>
                         <div class="korean-address">제주 제주시 용해로 36 1층</div>
                         <a href="https://naver.me/Fae5NzC3" target="_blank" class="map-btn">🗺️ Naver Map</a>
-                        <a href="./images/白帶魚菜單.HEIC" target="_blank" class="map-btn" style="background-color: #E8F0FE; color: #1A73E8;">👀菜單</a>
-                        </div>
+                        <button type="button" class="view-photo-dashed-btn" onclick="openImageModal('./images/白帶魚菜單.HEIC')">
+                            <span class="dashed-btn-icon">👀</span>
+                            <span class="dashed-btn-text">菜單</span>
+                        </button>
                     </div>
 
                     <div class="timeline-item">
@@ -1029,6 +1124,12 @@
 
     </div>
 
+    <!-- 🖼️ 圖片彈窗（全份網頁只要貼這 1 次，放在這裡） -->
+        <div id="image-modal" class="image-modal" onclick="closeImageModal(event)">
+            <span class="modal-close">&times;</span>
+            <img id="modal-img" class="modal-content" src="" alt="照片預覽">
+        </div>
+    
     <!-- 主程式邏輯 -->
     <script>
         // 🍊 濟州 6 日低飽和度柔和莫蘭迪色彩對照表
@@ -1220,152 +1321,27 @@ const jejuDayThemes = {
         if (calcAmountInput) calcAmountInput.addEventListener('input', updateConverter);
         if (calcCurrSelect) calcCurrSelect.addEventListener('change', updateConverter);
 
-// 📸 照片上傳與相片牆功能 (含圖片壓縮與 localStorage 本地儲存)
-    function initPhotoFeatures() {
-    const items = document.querySelectorAll('.timeline-item');
+        // 🖼️ 打開圖片視窗
+        function openImageModal(imgUrl) {
+            const modal = document.getElementById('image-modal');
+            const modalImg = document.getElementById('modal-img');
+            if (!modal || !modalImg) return;
 
-    items.forEach(item => {
-        const itemId = item.getAttribute('data-id');
-        if (!itemId) return;
+            modalImg.src = imgUrl;
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden'; // 鎖定背景不讓滾動
+        }
 
-        // 避免重複綁定
-        if (item.querySelector('.photo-section')) return;
-
-        const photoSection = document.createElement('div');
-        photoSection.className = 'photo-section';
-
-        const labelBtn = document.createElement('label');
-        labelBtn.className = 'upload-photo-btn';
-        labelBtn.innerHTML = `📷 新增照片 <input type="file" accept="image/*" style="display:none;" onchange="handleImageUpload(event, '${itemId}')">`;
-
-        const gallery = document.createElement('div');
-        gallery.className = 'photo-gallery';
-        gallery.id = `gallery-${itemId}`;
-
-        photoSection.appendChild(labelBtn);
-        photoSection.appendChild(gallery);
-        item.appendChild(photoSection);
-
-        // 載入過去已儲存的照片
-        loadPhotos(itemId, gallery);
-    });
-}
-
-// 上傳與顯示主邏輯
-function handleImageUpload(event, itemId) {
-    const file = event.target.files[0];
-    if (!file) return;
-
-    const gallery = document.getElementById(`gallery-${itemId}`);
-    if (!gallery) return;
-
-    // 【核心修復】1. 立即生成 Blob 臨時網址並直接渲染到畫面上（不管多大的照片都能瞬間顯示）
-    const objectUrl = URL.createObjectURL(file);
-    renderPhotoDOM(objectUrl, gallery, () => {
-        // 刪除按鈕邏輯
-        deletePhotoFromStorage(itemId, objectUrl);
-    });
-
-    // 2. 背景非同步壓縮並存入 localStorage（失敗也不影響當前畫面呈現）
-    compressAndSave(file, itemId);
-
-    event.target.value = ''; // 重置 input
-}
-
-// 建立 DOM 圖片元素並強制顯示
-function renderPhotoDOM(srcUrl, gallery, onDelete) {
-    const container = document.createElement('div');
-    container.className = 'photo-thumb-container';
-
-    const img = document.createElement('img');
-    img.src = srcUrl;
-    img.style.width = '100%';
-    img.style.height = '100%';
-    img.style.objectFit = 'cover';
-
-    const delBtn = document.createElement('button');
-    delBtn.className = 'photo-delete-btn';
-    delBtn.innerText = '✕';
-    delBtn.onclick = () => {
-        onDelete();
-        container.remove();
-    };
-
-    container.appendChild(img);
-    container.appendChild(delBtn);
-    gallery.appendChild(container);
-}
-
-// 背景壓縮並儲存
-function compressAndSave(file, itemId) {
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        const img = new Image();
-        img.src = e.target.result;
-        img.onload = function() {
-            const canvas = document.createElement('canvas');
-            const maxDim = 500; // 壓縮至最大 500px 寬高
-            let width = img.width;
-            let height = img.height;
-
-            if (width > height && width > maxDim) {
-                height *= maxDim / width;
-                width = maxDim;
-            } else if (height > maxDim) {
-                width *= maxDim / height;
-                height = maxDim;
+        // 🖼️ 關閉圖片視窗（點擊背景或 ✕ 即可關閉）
+        function closeImageModal(e) {
+            if (e.target.id === 'image-modal' || e.target.classList.contains('modal-close')) {
+                const modal = document.getElementById('image-modal');
+                if (modal) {
+                    modal.classList.remove('active');
+                    document.body.style.overflow = ''; // 恢復背景滾動
+                }
             }
-
-            canvas.width = width;
-            canvas.height = height;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(img, 0, 0, width, height);
-
-            const base64 = canvas.toDataURL('image/jpeg', 0.5);
-            saveToLocalStorage(itemId, base64);
-        };
-    };
-    reader.readAsDataURL(file);
-}
-
-// LocalStorage 寫入
-function saveToLocalStorage(itemId, base64Data) {
-    try {
-        let photos = JSON.parse(localStorage.getItem(`jeju_photos_${itemId}`) || '[]');
-        photos.push(base64Data);
-        localStorage.setItem(`jeju_photos_${itemId}`, JSON.stringify(photos));
-    } catch (e) {
-        console.warn('LocalStorage 已滿，無法跨頁面保留此照片，但當前畫面不受影響。');
-    }
-}
-
-// 頁面重整時載入照片
-function loadPhotos(itemId, gallery) {
-    try {
-        let photos = JSON.parse(localStorage.getItem(`jeju_photos_${itemId}`) || '[]');
-        photos.forEach(base64Data => {
-            renderPhotoDOM(base64Data, gallery, () => {
-                deletePhotoFromStorage(itemId, base64Data);
-            });
-        });
-    } catch (e) {}
-}
-
-// 刪除照片紀錄
-function deletePhotoFromStorage(itemId, targetSrc) {
-    try {
-        let photos = JSON.parse(localStorage.getItem(`jeju_photos_${itemId}`) || '[]');
-        photos = photos.filter(src => src !== targetSrc);
-        localStorage.setItem(`jeju_photos_${itemId}`, JSON.stringify(photos));
-    } catch (e) {}
-}
-
-// 確保執行
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initPhotoFeatures);
-} else {
-    initPhotoFeatures();
-}
+        }
         
         document.addEventListener('DOMContentLoaded', () => {
             updateCountdown();
