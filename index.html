@@ -1186,10 +1186,9 @@ const jejuDayThemes = {
             activeSection.classList.add('active');
         }
 
-    // 💡 動態移動匯率卡片位置：首頁置底，其他天置頂
+   // 2. 💡 動態移動匯率卡片位置：首頁置底，其他天置頂
     const rateCard = document.getElementById('currency-exchange-card');
     const homeView = document.getElementById('home-view');
-    const targetViewEl = document.getElementById(targetView);
 
     if (rateCard) {
         if (targetView === 'home' && homeView) {
@@ -1197,19 +1196,13 @@ const jejuDayThemes = {
             homeView.appendChild(rateCard);
             rateCard.style.marginTop = '25px';
             rateCard.style.marginBottom = '20px';
-        } else if (targetViewEl) {
-            // 其他天數：塞到該天數檢視 (例如 day-1) 的最頂端，這樣才不會跑去 Tab 按鈕上方
-            targetViewEl.prepend(rateCard);
+        } else if (activeSection) {
+            // 其他天數：直接塞到當前天數區塊 (activeSection) 的最頂端
+            activeSection.prepend(rateCard);
             rateCard.style.marginTop = '0px';
             rateCard.style.marginBottom = '20px';
         }
     }
-}
-
-// 🚀 關鍵修正：網頁一載入完成，立刻主動執行一次初始化！
-document.addEventListener('DOMContentLoaded', function() {
-    switchView('home'); // 假設預設進入首頁，確保剛進網頁時匯率卡片就在首頁最底下
-});
     // 更新主題配色
     const theme = jejuDayThemes[targetView] || jejuDayThemes['home'];
     document.documentElement.style.setProperty('--primary', theme.primary);
