@@ -1373,11 +1373,11 @@ const jejuDayThemes = {
         }
         
         document.addEventListener('DOMContentLoaded', () => {
+            switchView('home');
             updateCountdown();
             fetchJejuWeather();
             fetchLiveRates();
             initPhotoFeatures();
-            switchView('home');
         });
     </script>
 </body>
