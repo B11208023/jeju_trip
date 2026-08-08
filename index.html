@@ -381,20 +381,23 @@
 }
 
 .view-photo-dashed-btn {
-    display: flex;
-    flex-direction: column;
+    display: inline-flex;
     align-items: center;
-    justify-content: center;
-    width: 75px;  /* 75x75 正方形 */
-    height: 75px;
-    border: 2px dashed var(--primary); /* 自動套用主題顏色虛線 */
-    border-radius: 8px;
-    color: var(--primary); /* 自動套用主題文字顏色 */
-    background-color: color-mix(in srgb, var(--primary) 10%, transparent); /* 10% 濃度的淡色主題底 */
+    gap: 4px; /* 與 map-btn 一樣的間距 */
+    font-size: 12px; /* 與 map-btn 一樣的字級 */
+    padding: 6px 12px; /* 與 map-btn 一樣的內襯 */
+    border-radius: 6px; /* 與 map-btn 一樣的圓角 */
+    font-weight: bold;
+    width: fit-content;
+    
+    /* 虛線樣式與主題顏色連動 */
+    border: 1.5px dashed var(--primary);
+    background-color: color-mix(in srgb, var(--primary) 10%, transparent);
+    color: var(--primary);
+    
     cursor: pointer;
     transition: all 0.2s ease;
-    text-decoration: none;
-    padding: 0;
+    box-sizing: border-box;
 }
 
 .view-photo-dashed-btn:hover {
@@ -528,7 +531,7 @@
                         <span class="info-badge badge-chair-y">餐椅 ✓</span>
                         <div class="korean-address">제주 제주시 용해로 36 1층</div>
                         <a href="https://naver.me/Fae5NzC3" target="_blank" class="map-btn">🗺️ Naver Map</a>
-                        <button type="button" class="view-photo-dashed-btn" onclick="openImageModal('./images/白帶魚菜單.HEIC')">
+                        <button type="button" class="view-photo-dashed-btn" onclick="openImageModal('./images/白帶魚菜單.jpg')">
                             <span class="dashed-btn-icon">👀</span>
                             <span class="dashed-btn-text">菜單</span>
                         </button>
@@ -585,7 +588,10 @@
                         <span class="info-badge badge-chair-y">餐椅 ✓</span><span class="info-badge badge-chair-y">可預約</span>
                         <div class="korean-address">제주 제주시 월정1길 16-1 월고집</div>
                         <a href="https://naver.me/5CCo80Wl" target="_blank" class="map-btn">🗺️ Naver Map</a>
-                        <div class="photo-section"><label class="upload-photo-btn">📷 新增照片 <input type="file" accept="image/*" multiple style="display:none;"></label><div class="photo-gallery" id="gallery-d1-1"></div></div>
+                        <button type="button" class="view-photo-dashed-btn" onclick="openImageModal('./images/月高家.jpg')">
+                            <span class="dashed-btn-icon">👀</span>
+                            <span class="dashed-btn-text">菜單</span>
+                        </button
                     </div>
 
                     <div class="timeline-item">
