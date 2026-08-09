@@ -416,6 +416,132 @@
     text-align: center;
     line-height: 1.2;
 }
+
+/* 🧳 行李清單專屬樣式 */
+    .checklist-add-box {
+        display: flex;
+        gap: 8px;
+        background: var(--card-bg);
+        padding: 12px;
+        border-radius: 10px;
+        border: 1px solid var(--border-color);
+        margin-bottom: 15px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+    }
+
+    .checklist-add-box select, .checklist-add-box input {
+        padding: 8px;
+        border: 1px solid var(--border-color);
+        border-radius: 6px;
+        font-size: 13px;
+        outline: none;
+    }
+
+    .checklist-add-box input {
+        flex: 1;
+    }
+
+    .checklist-add-box button {
+        background: var(--primary);
+        color: white;
+        border: none;
+        padding: 8px 14px;
+        border-radius: 6px;
+        font-weight: bold;
+        cursor: pointer;
+        font-size: 13px;
+        transition: opacity 0.2s;
+    }
+
+    .checklist-add-box button:hover {
+        opacity: 0.85;
+    }
+
+    .checklist-card {
+        background: var(--card-bg);
+        border-radius: 12px;
+        padding: 15px;
+        margin-bottom: 15px;
+        border: 1px solid var(--border-color);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+
+    .checklist-cat-title {
+        font-size: 15px;
+        font-weight: bold;
+        color: var(--primary);
+        padding-bottom: 6px;
+        margin-bottom: 10px;
+        border-bottom: 1.5px dashed var(--border-color);
+    }
+
+    .checklist-ul {
+        list-style: none;
+    }
+
+    .checklist-li {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 8px 0;
+        border-bottom: 1px solid #F5F5F5;
+    }
+
+    .checklist-li:last-child {
+        border-bottom: none;
+    }
+
+    .checklist-label {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        cursor: pointer;
+        font-size: 14px;
+        user-select: none;
+    }
+
+    .checklist-label input[type="checkbox"] {
+        width: 17px;
+        height: 17px;
+        accent-color: var(--primary);
+        cursor: pointer;
+    }
+
+    .checklist-text.completed {
+        text-decoration: line-through;
+        color: #A0A0A0;
+    }
+
+    .checklist-del-btn {
+        background: none;
+        border: none;
+        color: #D9534F;
+        cursor: pointer;
+        font-size: 14px;
+        padding: 2px 6px;
+        opacity: 0.5;
+        transition: opacity 0.2s;
+    }
+
+    .checklist-del-btn:hover {
+        opacity: 1;
+    }
+
+    .checklist-reset-btn {
+        background: transparent;
+        border: 1px solid var(--border-color);
+        color: var(--text-muted);
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-size: 12px;
+        cursor: pointer;
+        float: right;
+        margin-top: -5px;
+    }
+
+    .checklist-reset-btn:hover {
+        background: var(--primary-light);
+    }
     </style>
 </head>
 <body>
@@ -462,7 +588,6 @@
                 </div>
             </div>
         </div>
-
         <!-- ================= 🏠 首頁檢視區塊 ================= -->
         <div id="home-view" class="view-section active">
             <!-- ⏳ 1. 出發倒數計時 -->
@@ -505,6 +630,30 @@
                 <p style="font-size: 13px;"><b>新款 iPhone (15以上)：</b>線不一定要原廠，但必備「USB-A 轉接頭」</p>
             </div>
         </div>
+
+        <!-- 🧳 3. 互動行李清單區塊 -->
+            <div class="section-title">
+                🧳 <b>韓國旅遊行李打包備忘錄</b>
+            </div>
+            
+            <div class="checklist-add-box">
+                <select id="checklistCatSelect">
+                    <option value="重要證件與財務">重要證件與財務</option>
+                    <option value="電子產品">電子產品</option>
+                    <option value="衣物與配件">衣物與配件</option>
+                    <option value="盥洗與個人用品">盥洗與個人用品</option>
+                    <option value="隨身常備藥品">隨身常備藥品</option>
+                    <option value="其他">其他</option>
+                </select>
+                <input type="text" id="checklistInput" placeholder="自訂物品（例如：隱形眼鏡）">
+                <button onclick="addChecklistItem()">新增</button>
+            </div>
+
+            <div id="checklistContainer"></div>
+            
+            <div style="overflow: hidden; margin-bottom: 20px;">
+                <button class="checklist-reset-btn" onclick="resetChecklistData()">🔄 恢復預設定單</button>
+            </div>
 
         <!-- ================= DAY 1 ================= -->
         <div id="day1-view" class="view-section">
@@ -1371,14 +1520,153 @@ const jejuDayThemes = {
                 }
             }
         }
-        
+
+        // 6. 🧳 行李清單核心邏輯 (支援 LocalStorage 自動保存)
+    const defaultChecklistData = [
+        {
+            category: "重要證件與財務",
+            items: [
+                { text: "護照正本（效期6個月以上）", checked: false },
+                { text: "台灣駕照 & 國際駕照正本", checked: false },
+                { text: "WOWPASS 卡 / 信用卡", checked: false },
+                { text: "台幣現金（換匯用）/ 韓元現金", checked: false },
+                { text: "機票憑證 / 住宿預訂單", checked: false }
+            ]
+        },
+        {
+            category: "電子產品",
+            items: [
+                { text: "手機 & 充電線", checked: false },
+                { text: "韓國轉接頭（圓孔 SE/C型）", checked: false },
+                { text: "行動電源（貼絕緣膠帶、隨身攜帶）", checked: false },
+                { text: "車載 CarPlay 充電線 / 轉接頭", checked: false }
+            ]
+        },
+        {
+            category: "衣物與配件",
+            items: [
+                { text: "換洗衣物 / 內衣褲 / 襪子", checked: false },
+                { text: "小朋友泳裝 / 玩水裝備", checked: false },
+                { text: "舒適休閒鞋 / 拖鞋", checked: false },
+                { text: "薄外套 / 防曬遮陽帽 / 墨鏡", checked: false }
+            ]
+        },
+        {
+            category: "盥洗與個人用品",
+            items: [
+                { text: "牙刷 / 牙膏 / 洗面乳", checked: false },
+                { text: "保養品 / 防曬乳 / 彩妝品", checked: false },
+                { text: "雙眼皮貼 / 隱形眼鏡 / 隨身鏡", checked: false },
+                { text: "濕紙巾 / 隨身衛生紙", checked: false }
+            ]
+        },
+        {
+            category: "隨身常備藥品",
+            items: [
+                { text: "感冒藥 / 止痛藥 / 腸胃藥", checked: false },
+                { text: "暈車藥 / OK 繃 / 外傷藥膏", checked: false },
+                { text: "小朋友常用常備藥", checked: false }
+            ]
+        }
+    ];
+
+    let checklistData = JSON.parse(localStorage.getItem('jeju_travel_checklist')) || defaultChecklistData;
+
+    function saveChecklistData() {
+        localStorage.setItem('jeju_travel_checklist', JSON.stringify(checklistData));
+    }
+
+    function renderChecklist() {
+        const container = document.getElementById('checklistContainer');
+        if (!container) return;
+        container.innerHTML = '';
+
+        checklistData.forEach((cat, catIdx) => {
+            if (cat.items.length === 0) return;
+
+            const card = document.createElement('div');
+            card.className = 'checklist-card';
+
+            let itemsHtml = '';
+            cat.items.forEach((item, itemIdx) => {
+                itemsHtml += `
+                    <li class="checklist-li">
+                        <label class="checklist-label">
+                            <input type="checkbox" ${item.checked ? 'checked' : ''} onchange="toggleChecklist(${catIdx}, ${itemIdx})">
+                            <span class="checklist-text ${item.checked ? 'completed' : ''}">${escapeHtml(item.text)}</span>
+                        </label>
+                        <button class="checklist-del-btn" onclick="deleteChecklistItem(${catIdx}, ${itemIdx})" title="刪除">✕</button>
+                    </li>
+                `;
+            });
+
+            card.innerHTML = `
+                <div class="checklist-cat-title">${cat.category}</div>
+                <ul class="checklist-ul">${itemsHtml}</ul>
+            `;
+            container.appendChild(card);
+        });
+    }
+
+    function toggleChecklist(catIdx, itemIdx) {
+        checklistData[catIdx].items[itemIdx].checked = !checklistData[catIdx].items[itemIdx].checked;
+        saveChecklistData();
+        renderChecklist();
+    }
+
+    function addChecklistItem() {
+        const catSelect = document.getElementById('checklistCatSelect');
+        const input = document.getElementById('checklistInput');
+        const text = input.value.trim();
+
+        if (!text) return;
+
+        let catObj = checklistData.find(c => c.category === catSelect.value);
+        if (!catObj) {
+            catObj = { category: catSelect.value, items: [] };
+            checklistData.push(catObj);
+        }
+
+        catObj.items.push({ text: text, checked: false });
+        input.value = '';
+        saveChecklistData();
+        renderChecklist();
+    }
+
+    function deleteChecklistItem(catIdx, itemIdx) {
+        checklistData[catIdx].items.splice(itemIdx, 1);
+        saveChecklistData();
+        renderChecklist();
+    }
+
+    function resetChecklistData() {
+        if (confirm("確定要將行李清單重置為預設狀態嗎？自訂新增的項目將會清除。")) {
+            checklistData = JSON.parse(JSON.stringify(defaultChecklistData));
+            saveChecklistData();
+            renderChecklist();
+        }
+    }
+
+    function escapeHtml(text) {
+        return text.replace(/[&<>"']/g, function(m) {
+            return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[m];
+        });
+    }
         document.addEventListener('DOMContentLoaded', () => {
             switchView('home');
             updateCountdown();
             fetchJejuWeather();
             fetchLiveRates();
             initPhotoFeatures();
-        });
+            renderChecklist();
+
+        const inputEl = document.getElementById('checklistInput');
+        if (inputEl) {
+            inputEl.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') addChecklistItem();
+            });
+        }
+    });
     </script>
 </body>
 </html>
