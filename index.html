@@ -1567,11 +1567,18 @@ const defaultChecklistData = [
             ]
         }
     ];
+    const STORAGE_KEY = 'jeju_travel_checklist_v2';
+        
+// 計算清單項目總數
+    function countTotalItems(data) {
+        if (!Array.isArray(data)) return 0;
+        return data.reduce((sum, cat) => sum + (cat.items ? cat.items.length : 0), 0);
+    }
 
-    // 檢查 localStorage，若無資料則使用預設清單
+    // 讀取紀錄：若無紀錄或項目總數為 0，則強制套用預設清單
     let savedChecklist = null;
     try {
-        savedChecklist = JSON.parse(localStorage.getItem('jeju_travel_checklist'));
+        savedChecklist = JSON.parse(localStorage.getItem(STORAGE_KEY));
     } catch (e) {
         savedChecklist = null;
     }
