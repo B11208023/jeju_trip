@@ -631,8 +631,9 @@
             </div>
     
         <!-- 🧳 3. 互動行李清單區塊 -->
+        <div id="luggage-section">
             <div class="section-title">
-                🧳 <b>韓國旅遊行李打包備忘錄</b>
+                🧳 <b>旅遊行李清單</b>
             </div>
             
             <div class="checklist-add-box">
@@ -1340,8 +1341,13 @@ const jejuDayThemes = {
 
     if (rateCard) {
         if (targetView === 'home' && homeView) {
-            // 首頁：塞到 homeView 的最底下
-            homeView.appendChild(rateCard);
+            // 首頁：塞到「行李區塊」的前面 (也就是行李區塊的上方)
+            const luggageSec = document.getElementById('luggage-section');
+            if (luggageSec) {
+                homeView.insertBefore(rateCard, luggageSec);
+            } else {
+                homeView.appendChild(rateCard);
+            }
             rateCard.style.marginTop = '25px';
             rateCard.style.marginBottom = '20px';
         } else if (activeSection) {
@@ -1588,7 +1594,8 @@ const defaultChecklistData = [
         : JSON.parse(JSON.stringify(defaultChecklistData));
 
     function saveChecklistData() {
-        localStorage.setItem('jeju_travel_checklist', JSON.stringify(checklistData));
+        // 改用 STORAGE_KEY 確保讀取與寫入的是同一個儲存空間
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(checklistData));
     }
 
     function renderChecklist() {
@@ -1694,7 +1701,6 @@ const defaultChecklistData = [
             updateCountdown();
             fetchJejuWeather();
             fetchLiveRates();
-            initPhotoFeatures();
             renderChecklist();
 
         const inputEl = document.getElementById('checklistInput');
