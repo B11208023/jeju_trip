@@ -1520,8 +1520,7 @@ const jejuDayThemes = {
             }
         }
 
-        // 6. 🧳 行李清單核心邏輯 (支援 LocalStorage 自動保存)
-    const defaultChecklistData = [
+const defaultChecklistData = [
         {
             category: "重要證件與財務",
             items: [
@@ -1554,7 +1553,7 @@ const jejuDayThemes = {
             category: "盥洗與個人用品",
             items: [
                 { text: "牙刷 / 牙膏 / 洗面乳", checked: false },
-                { text: "保養品 / 防曬乳 / 彩妝品", checked: false },
+                { text: "保養品 / 防曬乳 / 彩莊品", checked: false },
                 { text: "雙眼皮貼 / 隱形眼鏡 / 隨身鏡", checked: false },
                 { text: "濕紙巾 / 隨身衛生紙", checked: false }
             ]
@@ -1569,7 +1568,17 @@ const jejuDayThemes = {
         }
     ];
 
-    let checklistData = JSON.parse(localStorage.getItem('jeju_travel_checklist')) || defaultChecklistData;
+    // 檢查 localStorage，若無資料則使用預設清單
+    let savedChecklist = null;
+    try {
+        savedChecklist = JSON.parse(localStorage.getItem('jeju_travel_checklist'));
+    } catch (e) {
+        savedChecklist = null;
+    }
+
+    let checklistData = (savedChecklist && Array.isArray(savedChecklist) && savedChecklist.length > 0)
+        ? savedChecklist
+        : JSON.parse(JSON.stringify(defaultChecklistData));
 
     function saveChecklistData() {
         localStorage.setItem('jeju_travel_checklist', JSON.stringify(checklistData));
@@ -1580,24 +1589,34 @@ const jejuDayThemes = {
         if (!container) return;
         container.innerHTML = '';
 
-        checklistData.forEach((cat, catIdx) => {
-            if (cat.items.length === 0) return;
+        if (!checklistData || checklistData.length === 0) {
+            checklistData = JSON.parse(JSON.stringify(defaultChecklistData));
+            saveChecklistData();
+        }
 
+        checklistData.forEach((cat, catIdx) => {
             const card = document.createElement('div');
             card.className = 'checklist-card';
 
             let itemsHtml = '';
-            cat.items.forEach((item, itemIdx) => {
-                itemsHtml += `
-                    <li class="checklist-li">
-                        <label class="checklist-label">
-                            <input type="checkbox" ${item.checked ? 'checked' : ''} onchange="toggleChecklist(${catIdx}, ${itemIdx})">
-                            <span class="checklist-text ${item.checked ? 'completed' : ''}">${escapeHtml(item.text)}</span>
-                        </label>
-                        <button class="checklist-del-btn" onclick="deleteChecklistItem(${catIdx}, ${itemIdx})" title="刪除">✕</button>
-                    </li>
-                `;
-            });
+            if (cat.items && cat.items.length > 0) {
+                cat.items.forEach((item, itemIdx) => {
+                    itemsHtml += `
+                        <li class="checklist-li">
+                            <label class="checklist-label">
+                                <input type="checkbox" ${item.checked ? 'checked' : ''} onchange="toggleChecklist(${catIdx}, ${itemIdx})">
+                                <span class="checklist-text ${item.checked ? 'completed' : ''}">${escapeHtml(item.text)}</span>
+                            </label>
+                            <div style="display: flex; gap: 6px; align-items: center;">
+                                <button class="checklist-del-btn" onclick="editChecklistItem(${catIdx}, ${itemIdx})" title="修改文字" style="color: var(--primary);">✏️</button>
+                                <button class="checklist-del-btn" onclick="deleteChecklistItem(${catIdx}, ${itemIdx})" title="刪除">✕</button>
+                            </div>
+                        </li>
+                    `;
+                });
+            } else {
+                itemsHtml = `<div style="font-size: 13px; color: #aaa; padding: 6px 0; text-align: center;">尚無自訂項目，可從上方新增</div>`;
+            }
 
             card.innerHTML = `
                 <div class="checklist-cat-title">${cat.category}</div>
@@ -1632,6 +1651,18 @@ const jejuDayThemes = {
         renderChecklist();
     }
 
+    // 新增：修改既有項目名稱
+    function editChecklistItem(catIdx, itemIdx) {
+        const currentText = checklistData[catIdx].items[itemIdx].text;
+        const newText = prompt("請輸入新的項目名稱：", currentText);
+        
+        if (newText !== null && newText.trim() !== "") {
+            checklistData[catIdx].items[itemIdx].text = newText.trim();
+            saveChecklistData();
+            renderChecklist();
+        }
+    }
+
     function deleteChecklistItem(catIdx, itemIdx) {
         checklistData[catIdx].items.splice(itemIdx, 1);
         saveChecklistData();
@@ -1639,7 +1670,7 @@ const jejuDayThemes = {
     }
 
     function resetChecklistData() {
-        if (confirm("確定要將行李清單重置為預設狀態嗎？自訂新增的項目將會清除。")) {
+        if (confirm("確定要將行李清單重置為預設狀態嗎？自訂與修改過的項目將會還原。")) {
             checklistData = JSON.parse(JSON.stringify(defaultChecklistData));
             saveChecklistData();
             renderChecklist();
