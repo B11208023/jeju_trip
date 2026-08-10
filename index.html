@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+        content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <link rel="icon" href="./images/jeju.png" type="image/png">
     <link rel="apple-touch-icon" href="./images/jeju.png">
     <title>Jeju🍊六天五夜行程表</title>
@@ -1320,11 +1320,13 @@
 
     </div>
 
-        <!-- 🖼️ 圖片彈窗（全份網頁只要貼這 1 次，放在這裡） -->
-        <div id="image-modal" class="image-modal" onclick="closeImageModal(event)">
-            <span class="modal-close">&times;</span>
-            <img id="modal-img" class="modal-content" src="" alt="照片預覽">
+    <!-- 🖼️ 圖片彈窗（支援縮放與開原圖） -->
+    <div id="image-modal" class="image-modal" onclick="closeImageModal(event)">
+        <span class="modal-close">&times;</span>
+        <div style="position: relative; max-width: 95%; max-height: 85vh; text-align: center;">
+            <img id="modal-img" class="modal-content" src="" alt="照片預覽" onclick="toggleZoom(event)">
         </div>
+    </div>
     
     <!-- 主程式邏輯 -->
     <script>
