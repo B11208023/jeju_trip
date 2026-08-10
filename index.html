@@ -334,43 +334,54 @@
     left: 0;
     width: 100vw;
     height: 100vh;
-    background-color: rgba(0, 0, 0, 0.85);
-    backdrop-filter: blur(5px); /* 背景微微模糊 */
+    background-color: rgba(0, 0, 0, 0.88);
+    backdrop-filter: blur(5px);
     justify-content: center;
     align-items: center;
     padding: 20px;
     box-sizing: border-box;
+    overflow: auto; /* 放大時允許捲動 */
 }
 
-/* 顯示時彈出 */
 .image-modal.active {
     display: flex;
 }
 
 .modal-content {
-    max-width: 95%;
-    max-height: 80vh;
-    border-radius: 12px;
+    max-width: 100%;
+    max-height: 75vh;
+    border-radius: 10px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
     object-fit: contain;
+    transition: transform 0.25s ease;
+    cursor: zoom-in;
 }
 
-/* 關閉按鈕 ✕ */
+/* 點擊照片時放大 2.2 倍 */
+.modal-content.zoomed {
+    transform: scale(2.2);
+    cursor: zoom-out;
+    margin: 50% 0; /* 留出滾動空間 */
+}
+
+/* 關閉按鈕 ✕ (置頂固定) */
 .modal-close {
-    position: absolute;
-    top: 20px;
-    right: 20px;
+    position: fixed;
+    top: 25px;
+    right: 25px;
     color: #ffffff;
     font-size: 28px;
     font-weight: bold;
     cursor: pointer;
-    width: 40px;
-    height: 40px;
-    background: rgba(255, 255, 255, 0.2);
+    width: 44px;
+    height: 44px;
+    background: rgba(0, 0, 0, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.3);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
+    z-index: 100000;
 }
 
 
@@ -1507,36 +1518,46 @@ const jejuDayThemes = {
         if (calcAmountInput) calcAmountInput.addEventListener('input', updateConverter);
         if (calcCurrSelect) calcCurrSelect.addEventListener('change', updateConverter);
 
-        // 🖼️ 打開圖片視窗（支援跳轉原圖放大）
+        // 🖼️ 打開圖片視窗
         function openImageModal(imgUrl) {
-            // 判斷是否為 iOS 主畫面模式或手機環境，直接新視窗開啟圖片即可自由縮放
-            const isStandalone = window.navigator.standalone || window.matchMedia('(display-mode: standalone)').matches;
+            const modal = document.getElementById('image-modal');
+            const modalImg = document.getElementById('modal-img');
+            const modalSrcBtn = document.getElementById('modal-open-src');
+            if (!modal || !modalImg) return;
+
+            modalImg.src = imgUrl;
+            modalImg.classList.remove('zoomed'); // 重置放大狀態
     
-            if (isStandalone) {
-                window.open(imgUrl, '_blank');
-            } else {
-                const modal = document.getElementById('image-modal');
-                const modalImg = document.getElementById('modal-img');
-                if (!modal || !modalImg) return;
-
-                modalImg.src = imgUrl;
-                modal.classList.add('active');
-                document.body.style.overflow = 'hidden'; // 鎖定背景不讓滾動
-            }
+            if (modalSrcBtn) {
+            modalSrcBtn.href = imgUrl;
         }
 
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden'; // 鎖定背景
+    }
 
-        // 🖼️ 關閉圖片視窗（點擊背景或 ✕ 即可關閉）
-        function closeImageModal(e) {
-            if (e.target.id === 'image-modal' || e.target.classList.contains('modal-close')) {
-                const modal = document.getElementById('image-modal');
-                if (modal) {
-                    modal.classList.remove('active');
-                    document.body.style.overflow = ''; // 恢復背景滾動
-                }
-            }
+        // 點擊照片切換放大/還原
+        function toggleZoom(e) {
+            e.stopPropagation(); // 防止觸發背景關閉
+    const modalImg = document.getElementById('modal-img');
+    if (modalImg) {
+        modalImg.classList.toggle('zoomed');
+    }
+}
+
+// 🖼️ 關閉圖片視窗（點背景或 ✕ 關閉）
+function closeImageModal(e) {
+    // 點擊背景、✕ 按鈕或連結外層時關閉
+    if (e.target.id === 'image-modal' || e.target.classList.contains('modal-close')) {
+        const modal = document.getElementById('image-modal');
+        const modalImg = document.getElementById('modal-img');
+        if (modal) {
+            modal.classList.remove('active');
+            if (modalImg) modalImg.classList.remove('zoomed');
+            document.body.style.overflow = ''; // 恢復背景滾動
         }
-
+    }
+}
 const defaultChecklistData = [
         {
             category: "重要證件與財務",
