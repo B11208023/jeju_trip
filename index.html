@@ -612,9 +612,16 @@
 
             <!-- 🌤️ 2. 六天天氣概覽 -->
             <div class="weather-overview-card">
-                <div style="font-weight: bold; color: var(--primary); font-size: 15px; margin-bottom: 5px;">🌤️ 濟州島 6 天天氣概覽</div>
-                <div style="font-size: 11px; color: #888;" id="overview-update-time">即時連線更新中...</div>
-                <div class="weather-grid" id="weather-overview-grid">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 8px;">
+                    <div>
+                        <div style="font-weight: bold; color: var(--primary); font-size: 15px; margin-bottom: 5px;">🌤️ 濟州島 6 天天氣概覽</div>
+                        <div style="font-size: 11px; color: #888;" id="overview-update-time">即時連線更新中...</div>
+                    </div>
+                    <a href="https://www.weather.go.kr/nchn/forecast/short-term.do" target="_blank" class="map-btn" style="margin-top: 0; font-size: 12px; padding: 5px 10px;">
+                        🌐 韓國氣象廳詳細預報
+                    </a>
+                </div>
+                    <div class="weather-grid" id="weather-overview-grid">
                     <div class="weather-grid-item"><div class="day-name">9/2 (三)</div><div class="overview-temp">--°C</div></div>
                     <div class="weather-grid-item"><div class="day-name">9/3 (四)</div><div class="overview-temp">--°C</div></div>
                     <div class="weather-grid-item"><div class="day-name">9/4 (五)</div><div class="overview-temp">--°C</div></div>
@@ -673,9 +680,12 @@
         <div id="day1-view" class="view-section">
             <div id="day1" class="day-section">
                 <div class="notice-card" style="border-top-color: var(--primary); background: #ffffff;">
-                    <div style="font-weight: bold; color: var(--primary);">🌤️ Day 1 預報天氣 (濟州島)</div>
-                    <div style="font-size: 13px; color: #555; margin-top: 4px;" id="day1-weather-info">天氣資訊連線載入中...</div>
-                </div>            
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div style="font-weight: bold; color: var(--primary);">🌤️ Day 1 預報天氣 (濟州島)</div>
+                        <a href="https://www.weather.go.kr/nchn/forecast/short-term.do" target="_blank" class="map-btn" style="margin-top: 0; font-size: 11px; padding: 4px 8px;">🌐 氣象廳</a>
+                    </div>
+                <div style="font-size: 13px; color: #555; margin-top: 4px;" id="day1-weather-info">天氣資訊連線載入中...</div>
+                </div>           
                 <div class="day-header">Day 1 — 9/2（三）落地濟州與市區採購</div>
                 <div class="timeline">
                     <div class="timeline-item">
